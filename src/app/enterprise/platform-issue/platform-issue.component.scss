@@ -1,0 +1,44 @@
+.platform-issue-wrapper {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.platform-issue-wrapper h2 {
+  margin-bottom: 1.2rem;
+}
+.form-group {
+  margin-bottom: 1.2rem;
+}
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+input, textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+button[type="submit"] {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 2rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+button[type="submit"]:disabled {
+  background: #b3b3b3;
+  cursor: not-allowed;
+}
+.confirmation {
+  text-align: center;
+  color: #388e3c;
+  font-weight: 600;
+}

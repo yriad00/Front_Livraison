@@ -1,0 +1,109 @@
+<div class="delivery-agent-container">
+  <div class="delivery-agent-header">
+    <h2>Delivery Agent Management</h2>
+    <p>Approve or reject delivery agent applications</p>
+  </div>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <label for="status-filter">Status</label>
+      <select id="status-filter" [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="type-filter">Agent Type</label>
+      <select id="type-filter" [(ngModel)]="typeFilter" (change)="applyFilters()">
+        <option value="all">All Types</option>
+        <option value="platform">Platform Agents</option>
+        <option value="enterprise">Enterprise Agents</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+  <div class="loading-indicator" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading delivery agents...</p>
+  </div>
+
+  <div class="delivery-agents-list" *ngIf="!loading && filteredAgents.length > 0">
+    <div class="agent-card" *ngFor="let agent of filteredAgents">
+      <div class="agent-header">
+        <div class="agent-name">
+          <h3>{{ agent.firstName }} {{ agent.lastName }}</h3>
+          <span class="agent-username">{{'@'}}{{ agent.username }}</span>
+        </div>
+        
+        <div class="agent-status" [ngClass]="agent.status">
+          {{ agent.status | titlecase }}
+        </div>
+      </div>
+      
+      <div class="agent-details">
+        <div class="detail-item">
+          <span class="label">Email:</span>
+          <span class="value">{{ agent.email }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <span class="label">Phone:</span>
+          <span class="value">{{ agent.phone }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <span class="label">Agent Type:</span>
+          <span class="value">{{ agent.agentType === 'platform' ? 'Platform Delivery Agent' : 'Enterprise Delivery Agent' }}</span>
+        </div>
+        
+        <div class="detail-item" *ngIf="agent.enterpriseName">
+          <span class="label">Enterprise:</span>
+          <span class="value">{{ agent.enterpriseName }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <span class="label">Applied:</span>
+          <span class="value">{{ agent.applicationDate | date:'mediumDate' }}</span>
+        </div>
+      </div>
+      
+      <!-- Document link only for enterprise agents -->
+      <div class="agent-documents" *ngIf="agent.agentType === 'enterprise' && agent.documentUrl">
+        <button class="document-link" (click)="viewDocument(agent.documentUrl)">
+          <i class="fas fa-file-pdf"></i> View Delivery Agent Credentials
+        </button>
+      </div>
+      
+      <div class="agent-actions">
+        <button 
+          class="btn btn-approve" 
+          *ngIf="agent.status !== 'approved'" 
+          [disabled]="agent.status === 'rejected'"
+          (click)="approveAgent(agent)">
+          Approve
+        </button>
+        
+        <button 
+          class="btn btn-reject" 
+          *ngIf="agent.status !== 'rejected'" 
+          [disabled]="agent.status === 'approved'"
+          (click)="rejectAgent(agent)">
+          Reject
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-agents" *ngIf="!loading && filteredAgents.length === 0">
+    <div class="empty-state">
+      <i class="fas fa-user-times"></i>
+      <p>No delivery agents match your filter criteria</p>
+      <button class="btn btn-reset" (click)="statusFilter = 'all'; typeFilter = 'all'; applyFilters()">Reset Filters</button>
+    </div>
+  </div>
+</div> 

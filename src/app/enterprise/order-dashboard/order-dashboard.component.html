@@ -1,0 +1,29 @@
+<div class="dashboard-container">
+  <h2>Order Dashboard</h2>
+  <div class="filters">
+    <button (click)="filterByStatus('all')">All</button>
+    <button (click)="filterByStatus('pending')">Pending</button>
+    <button (click)="filterByStatus('in-progress')">In Progress</button>
+    <button (click)="filterByStatus('delivered')">Delivered</button>
+    <button (click)="filterByStatus('cancelled')">Cancelled</button>
+  </div>
+  
+  <div class="orders-list">
+    <div *ngFor="let order of filteredOrders" class="order-card">
+      <div class="order-header">
+        <span class="order-id">Order #{{ order.id }}</span>
+        <span class="order-status" [ngClass]="order.status">{{ order.status }}</span>
+      </div>
+      <div class="order-details">
+        <p><strong>Client:</strong> {{ order.clientName }}</p>
+        <p><strong>Delivery Address:</strong> {{ order.deliveryAddress }}</p>
+        <p><strong>Order Date:</strong> {{ order.orderDate | date }}</p>
+        <p><strong>Estimated Delivery:</strong> {{ order.estimatedDelivery | date }}</p>
+      </div>
+      <div class="order-actions">
+        <button (click)="viewDetails(order.id)">View Details</button>
+        <button (click)="trackOrder(order.id)">Track Order</button>
+      </div>
+    </div>
+  </div>
+</div>

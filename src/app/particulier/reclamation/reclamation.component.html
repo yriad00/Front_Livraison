@@ -1,0 +1,91 @@
+<div class="reclamation-container">
+  <header class="page-header">
+    <h1>My Reclamations</h1>
+    <button class="btn-new" (click)="toggleReclamationForm()">
+      {{ showNewReclamationForm ? 'Cancel' : 'New Reclamation' }}
+    </button>
+  </header>
+
+  <div class="reclamation-content">
+    <!-- New Reclamation Form -->
+    <div class="new-reclamation-form" *ngIf="showNewReclamationForm">
+      <h2>Submit New Reclamation</h2>
+      <form (ngSubmit)="submitReclamation()">
+        <div class="form-group">
+          <label for="orderId">Order ID</label>
+          <select id="orderId" name="orderId" [(ngModel)]="newReclamation.orderId" required>
+            <option value="">Select an order</option>
+            <option *ngFor="let order of orders" [value]="order.id">
+              {{ order.id }} ({{ order.date }})
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" [(ngModel)]="newReclamation.subject" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="4" [(ngModel)]="newReclamation.description" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" name="priority" [(ngModel)]="newReclamation.priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="toggleReclamationForm()">Cancel</button>
+          <button type="submit" class="btn-submit">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Reclamations List -->
+    <div class="reclamations-list">
+      <div class="reclamation-card" *ngFor="let reclamation of reclamations">
+        <div class="reclamation-header">
+          <div class="reclamation-id">{{ reclamation.id }}</div>
+          <div class="reclamation-status" [ngClass]="reclamation.status.toLowerCase()">
+            {{ reclamation.status }}
+          </div>
+        </div>
+        
+        <div class="reclamation-details">
+          <div class="reclamation-info">
+            <span class="label">Order:</span>
+            <span class="value">{{ reclamation.orderId }}</span>
+          </div>
+          <div class="reclamation-info">
+            <span class="label">Date:</span>
+            <span class="value">{{ reclamation.date }}</span>
+          </div>
+          <div class="reclamation-info">
+            <span class="label">Priority:</span>
+            <span class="value priority" [ngClass]="reclamation.priority.toLowerCase()">
+              {{ reclamation.priority }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="reclamation-subject">{{ reclamation.subject }}</div>
+        <div class="reclamation-description">{{ reclamation.description }}</div>
+        
+        <div class="reclamation-actions">
+          <button class="btn-view">View Details</button>
+          <button class="btn-update" *ngIf="reclamation.status === 'Open'">Update</button>
+        </div>
+      </div>
+      
+      <div class="no-reclamations" *ngIf="reclamations.length === 0">
+        <p>You have no reclamations yet.</p>
+      </div>
+    </div>
+  </div>
+</div>

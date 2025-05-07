@@ -1,0 +1,298 @@
+.process-orders-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 30px;
+  
+  h1 {
+    margin: 0 0 5px;
+    font-size: 24px;
+    color: #2c3e50;
+  }
+  
+  p {
+    color: #7f8c8d;
+    margin: 0;
+  }
+}
+
+.process-content {
+  margin-bottom: 40px;
+}
+
+.step-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.step-header {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ecf0f1;
+  
+  h2 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    color: #2c3e50;
+  }
+  
+  p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 14px;
+  }
+}
+
+.orders-list {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.order-card {
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover:not(.disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+  
+  &.disabled {
+    opacity: 0.7;
+    background-color: #f9f9f9;
+  }
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #3498db;
+  color: white;
+  
+  .order-id {
+    font-weight: 600;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.pending {
+    background-color: #f39c12;
+    color: white;
+  }
+  
+  &.processing {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  &.shipped {
+    background-color: #9b59b6;
+    color: white;
+  }
+  
+  &.delivered {
+    background-color: #2ecc71;
+    color: white;
+  }
+  
+  &.cancelled {
+    background-color: #e74c3c;
+    color: white;
+  }
+}
+
+.order-details {
+  padding: 15px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 8px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .label {
+    font-weight: 600;
+    color: #7f8c8d;
+    width: 100px;
+    flex-shrink: 0;
+  }
+  
+  .value {
+    color: #2c3e50;
+  }
+}
+
+.order-actions {
+  padding: 0 15px 15px;
+}
+
+.btn-select {
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #2980b9;
+  }
+}
+
+.selected-order, .agent-selection, .confirmation-details, .confirmation-message {
+  padding: 20px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+h3 {
+  font-size: 16px;
+  color: #2c3e50;
+  margin: 0 0 15px;
+}
+
+.order-summary, .confirmation-section {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-row, .confirmation-row {
+  display: flex;
+  margin-bottom: 8px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .label {
+    font-weight: 600;
+    color: #7f8c8d;
+    width: 150px;
+    flex-shrink: 0;
+  }
+  
+  .value {
+    color: #2c3e50;
+  }
+}
+
+.confirmation-section {
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-group {
+  margin-bottom: 15px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+}
+
+.agent-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+}
+
+.confirmation-message {
+  p {
+    margin: 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    color: #2c3e50;
+  }
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px;
+}
+
+.btn-cancel, .btn-next, .btn-confirm {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: white;
+  color: #7f8c8d;
+  border: 1px solid #ddd;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.btn-next {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background-color: #2980b9;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-confirm {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  
+  &:hover {
+    background-color: #27ae60;
+  }
+} 

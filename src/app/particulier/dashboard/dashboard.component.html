@@ -1,0 +1,103 @@
+<div class="individual-dashboard">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <span *ngIf="isSidebarCollapsed">☰</span>
+    <span *ngIf="!isSidebarCollapsed">✕</span>
+  </button>
+  <nav class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <h2>Individual Portal</h2>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/particulier/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/particulier/all-orders" routerLinkActive="active">My Orders</a></li>
+      <li><a routerLink="/particulier/process-orders" routerLinkActive="active">Process Orders</a></li>
+      <li><a routerLink="/particulier/reclamations" routerLinkActive="active">My Reclamations</a></li>
+      <li><a routerLink="/particulier/platform-issue" routerLinkActive="active">Report Issue</a></li>
+      <li><a routerLink="/particulier/billing" routerLinkActive="active">Billing</a></li>
+      <li><a routerLink="/particulier/subscription" routerLinkActive="active">Subscription</a></li>
+      <li class="logout"><a (click)="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <header class="dashboard-header">
+      <h1>Individual Dashboard</h1>
+      <div class="user-info" *ngIf="currentUser">
+        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="dashboard-summary">
+        <div class="summary-card">
+          <h3>Active Orders</h3>
+          <p class="summary-count">3</p>
+        </div>
+        <div class="summary-card">
+          <h3>Total Orders</h3>
+          <p class="summary-count">12</p>
+        </div>
+        <div class="summary-card">
+          <h3>Pending Deliveries</h3>
+          <p class="summary-count">2</p>
+        </div>
+        <div class="summary-card">
+          <h3>Completed</h3>
+          <p class="summary-count">10</p>
+        </div>
+      </div>
+
+      <div class="dashboard-sections">
+        <section class="recent-orders">
+          <h2>Recent Orders</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Destination</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>IND-1002</td>
+                  <td>May 6, 2025</td>
+                  <td>In Progress</td>
+                  <td>123 Main St, Paris</td>
+                  <td><a href="#">Track</a></td>
+                </tr>
+                <tr>
+                  <td>IND-1001</td>
+                  <td>May 5, 2025</td>
+                  <td>Delivered</td>
+                  <td>456 Oak Ave, Lyon</td>
+                  <td><a href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td>IND-998</td>
+                  <td>May 1, 2025</td>
+                  <td>Delivered</td>
+                  <td>789 Pine Rd, Marseille</td>
+                  <td><a href="#">View</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="analytics">
+          <h2>Order Analytics</h2>
+          <div class="chart-placeholder">
+            <div class="chart-info">
+              <p>Monthly Order Summary</p>
+              <p class="chart-note">Charts and analytics will be displayed here</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

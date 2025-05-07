@@ -1,0 +1,193 @@
+.all-orders-container {
+  padding: 20px;
+  
+  .page-header {
+    margin-bottom: 25px;
+    
+    h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+  }
+  
+  .orders-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 15px;
+      
+      .search-box {
+        display: flex;
+        
+        input {
+          padding: 8px 12px;
+          border: 1px solid #ced4da;
+          border-radius: 4px 0 0 4px;
+          min-width: 250px;
+          
+          &:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          }
+        }
+        
+        .search-btn {
+          background-color: #0d6efd;
+          color: white;
+          border: 1px solid #0d6efd;
+          border-radius: 0 4px 4px 0;
+          padding: 8px 15px;
+          cursor: pointer;
+          
+          &:hover {
+            background-color: #0b5ed7;
+          }
+        }
+      }
+      
+      .filter-options {
+        display: flex;
+        gap: 10px;
+        
+        select {
+          padding: 8px 12px;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          background-color: white;
+          min-width: 150px;
+          
+          &:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          }
+        }
+      }
+    }
+    
+    .orders-table {
+      overflow-x: auto;
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        
+        th, td {
+          padding: 12px 15px;
+          text-align: left;
+          border-bottom: 1px solid #e9ecef;
+        }
+        
+        th {
+          font-weight: 600;
+          background-color: #f8f9fa;
+        }
+        
+        tbody tr:hover {
+          background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+          display: inline-block;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 600;
+          
+          &.delivered {
+            background-color: #d1e7dd;
+            color: #0f5132;
+          }
+          
+          &.processing {
+            background-color: #cff4fc;
+            color: #055160;
+          }
+          
+          &.pending {
+            background-color: #fff3cd;
+            color: #664d03;
+          }
+          
+          &.in {
+            background-color: #e2e3e5;
+            color: #41464b;
+          }
+          
+          &.cancelled {
+            background-color: #f8d7da;
+            color: #842029;
+          }
+        }
+        
+        .actions {
+          display: flex;
+          gap: 8px;
+          
+          button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+          }
+          
+          .btn-view {
+            background-color: #6c757d;
+            color: white;
+            
+            &:hover {
+              background-color: #5c636a;
+            }
+          }
+          
+          .btn-track {
+            background-color: #0d6efd;
+            color: white;
+            
+            &:hover {
+              background-color: #0b5ed7;
+            }
+          }
+        }
+      }
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 5px;
+      
+      .btn-page {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dee2e6;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        
+        &:hover {
+          background-color: #e9ecef;
+        }
+        
+        &.active {
+          background-color: #0d6efd;
+          color: white;
+          border-color: #0d6efd;
+        }
+      }
+    }
+  }
+}

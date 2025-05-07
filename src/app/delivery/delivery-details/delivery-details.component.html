@@ -1,0 +1,145 @@
+<div class="delivery-details-container">
+  <div class="back-link">
+    <a routerLink="/delivery/orders">← Back to Orders</a>
+  </div>
+  
+  <div class="page-header">
+    <h1>Delivery Details - Order #{{ order.id }}</h1>
+  </div>
+  
+  <div class="delivery-content">
+    <div class="order-info-card">
+      <h2>Order Information</h2>
+      <div class="order-grid">
+        <div class="info-group client-info">
+          <h3>Client Information</h3>
+          <p><span>Name:</span> {{ order.client }}</p>
+          <p><span>Phone:</span> {{ order.phone }}</p>
+        </div>
+        
+        <div class="info-group delivery-info">
+          <h3>Delivery Information</h3>
+          <p><span>Address:</span> {{ order.address }}</p>
+          <p><span>Special Instructions:</span> {{ order.specialInstructions }}</p>
+        </div>
+        
+        <div class="info-group payment-info">
+          <h3>Payment Information</h3>
+          <p><span>Method:</span> {{ order.paymentMethod }}</p>
+          <p><span>Total:</span> {{ order.total }}</p>
+        </div>
+      </div>
+      
+      <div class="order-items">
+        <h3>Items</h3>
+        <div class="items-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of order.items">
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <div class="delivery-status-card">
+      <h2>Delivery Progress</h2>
+      
+      <div class="progress-tracker">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="(currentStep / (deliveryStatuses.length - 1)) * 100 + '%'"></div>
+        </div>
+        
+        <div class="progress-steps">
+          <div 
+            *ngFor="let status of deliveryStatuses; let i = index" 
+            class="progress-step" 
+            [class.completed]="status.completed" 
+            [class.active]="i === currentStep && !status.completed"
+          >
+            <div class="step-indicator">
+              <span class="step-number">{{ i + 1 }}</span>
+            </div>
+            <div class="step-content">
+              <p class="step-name">{{ status.name }}</p>
+              <p *ngIf="status.timestamp" class="step-time">
+                {{ status.timestamp | date:'short' }}
+              </p>
+              <p *ngIf="status.notes" class="step-notes">
+                {{ status.notes }}
+              </p>
+              <div *ngIf="status.proofImage" class="proof-image">
+                <img src="assets/images/{{ status.proofImage }}" alt="Delivery Proof">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="update-status-form" *ngIf="currentStep < deliveryStatuses.length && currentStep < 4">
+        <h3>Update Status: {{ deliveryStatuses[currentStep].name }}</h3>
+        
+        <div class="form-group">
+          <label>Add Proof Photo:</label>
+          <div class="file-upload">
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none">
+            <button (click)="fileInput.click()" class="upload-btn">
+              <span *ngIf="!selectedImage">Choose File</span>
+              <span *ngIf="selectedImage">{{ selectedImage.name }}</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes:</label>
+          <textarea [(ngModel)]="notes" rows="3" placeholder="Add any notes or comments about this delivery step..."></textarea>
+        </div>
+        
+        <button class="btn-update" (click)="updateDeliveryStatus()">
+          Update to {{ deliveryStatuses[currentStep].name }}
+        </button>
+        
+        <div class="return-options-container">
+          <button class="btn-return" (click)="toggleReturnOptions()">
+            <span *ngIf="!showReturnOptions">Unable to Deliver?</span>
+            <span *ngIf="showReturnOptions">Cancel Return</span>
+          </button>
+          
+          <div class="return-options" *ngIf="showReturnOptions">
+            <h4>Select Reason for Return:</h4>
+            <div class="return-reasons">
+              <div *ngFor="let reason of returnReasons" class="reason-option">
+                <input type="radio" [id]="reason" name="returnReason" [value]="reason" [(ngModel)]="selectedReturnReason">
+                <label [for]="reason">{{ reason }}</label>
+              </div>
+            </div>
+            
+            <button class="btn-mark-returned" [disabled]="!selectedReturnReason" (click)="markAsReturned()">
+              Mark as Returned
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="delivery-complete" *ngIf="currentStep === deliveryStatuses.length - 1 && deliveryStatuses[currentStep].completed">
+        <div class="complete-message">
+          <h3>Delivery Completed!</h3>
+          <p>This order has been successfully delivered and marked as complete.</p>
+        </div>
+        
+        <div class="after-delivery-actions">
+          <a routerLink="/delivery/orders" class="btn-next-delivery">Go to Next Delivery</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

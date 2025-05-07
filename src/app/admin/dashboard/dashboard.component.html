@@ -1,0 +1,277 @@
+<div class="admin-dashboard">
+  <header class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <div class="user-info" *ngIf="currentUser">
+      <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="dashboard-content" [@fadeInAnimation]>
+    <div class="dashboard-summary">
+      <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
+        <h3>Total Orders</h3>
+        <p class="summary-count">{{ statisticsData.totalOrders }}</p>
+      </div>
+      <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
+        <h3>Enterprise Users</h3>
+        <p class="summary-count">{{ statisticsData.enterpriseUsers }}</p>
+      </div>
+      <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
+        <h3>Individual Users</h3>
+        <p class="summary-count">{{ statisticsData.individualUsers }}</p>
+      </div>
+    </div>
+
+    <div class="notification-badge" *ngIf="pendingRegistrations.length > 0" [@bounceAnimation]>
+      <span>{{ pendingRegistrations.length }}</span> pending registration(s) require your attention!
+    </div>
+
+    <div class="dashboard-sections">
+      <section class="registration-approvals" *ngIf="activeTab === 'registrations'" [@fadeInAnimation]>
+        <h2>Registration Approvals</h2>
+        
+        <!-- Registration Tabs -->
+        <div class="registration-tabs">
+          <button class="tab-btn" [class.active]="regType === 'all'" (click)="setRegType('all')">
+            All <span class="count-badge">{{ pendingRegistrations.length }}</span>
+          </button>
+          <button class="tab-btn" [class.active]="regType === 'enterprise'" (click)="setRegType('enterprise')">
+            Enterprise <span class="count-badge">{{ getRegistrationCount('enterprise') }}</span>
+          </button>
+          <button class="tab-btn" [class.active]="regType === 'individual'" (click)="setRegType('individual')">
+            Individual <span class="count-badge">{{ getRegistrationCount('individual') }}</span>
+          </button>
+          <button class="tab-btn" [class.active]="regType === 'delivery-agent'" (click)="setRegType('delivery-agent')">
+            Delivery Agents <span class="count-badge">{{ getRegistrationCount('delivery-agent') }}</span>
+          </button>
+        </div>
+        
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th>Details</th>
+                <th>Registration Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let reg of getFilteredRegistrations(); let i = index" [@listAnimation]>
+                <td>{{ reg.id }}</td>
+                <td>{{ reg.name }}</td>
+                <td>{{ reg.email }}</td>
+                <td>
+                  <span class="user-type-badge" [ngClass]="reg.userType">
+                    {{ reg.userType === 'enterprise' ? 'Enterprise' : 
+                       reg.userType === 'delivery-agent' ? 'Delivery Agent' : 'Individual' }}
+                  </span>
+                </td>
+                <td>
+                  <!-- Enterprise details -->
+                  <span *ngIf="reg.userType === 'enterprise'" 
+                        [ngClass]="{'minimum-met': reg.monthlyOrders && reg.monthlyOrders >= 50, 
+                                    'minimum-not-met': reg.monthlyOrders && reg.monthlyOrders < 50}">
+                    {{ reg.monthlyOrders || 0 }} orders/month
+                  </span>
+                  
+                  <!-- Delivery Agent details -->
+                  <div *ngIf="reg.userType === 'delivery-agent'" class="agent-details">
+                    <span class="vehicle-type">{{ reg.vehicleType || 'N/A' }}</span>
+                    <span class="agent-stat" 
+                          [ngClass]="{'minimum-met': reg.deliveryCapacity && reg.deliveryCapacity >= 10, 
+                                     'minimum-not-met': reg.deliveryCapacity === undefined || reg.deliveryCapacity < 10}">
+                      Capacity: {{ reg.deliveryCapacity || 0 }}
+                    </span>
+                    <span class="agent-stat" 
+                          [ngClass]="{'minimum-met': reg.experience && reg.experience >= 2, 
+                                     'minimum-not-met': reg.experience === undefined || reg.experience < 2}">
+                      Exp: {{ reg.experience || 0 }} years
+                    </span>
+                    <span class="agent-stat" 
+                          [ngClass]="{'minimum-met': reg.hasLicense, 
+                                     'minimum-not-met': !reg.hasLicense}">
+                      License: {{ reg.hasLicense ? 'Yes' : 'No' }}
+                    </span>
+                  </div>
+                  
+                  <!-- Individual details -->
+                  <span *ngIf="reg.userType === 'individual'">-</span>
+                </td>
+                <td>{{ reg.date | date:'mediumDate' }}</td>
+                <td class="action-buttons">
+                  <button class="btn btn-success btn-sm" (click)="approveRegistration(reg.id)" 
+                          [disabled]="(reg.userType === 'enterprise' && (reg.monthlyOrders === undefined || reg.monthlyOrders < 50)) ||
+                                     (reg.userType === 'delivery-agent' && !meetDeliveryAgentRequirements(reg))">
+                    <i class="fas fa-check"></i> Approve
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="rejectRegistration(reg.id)">
+                    <i class="fas fa-times"></i> Reject
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="empty-state" *ngIf="getFilteredRegistrations().length === 0">
+            <i class="fas fa-check-circle"></i>
+            <p>No pending {{ regType === 'all' ? '' : regType }} registrations to approve</p>
+          </div>
+        </div>
+        
+        <!-- Enterprise Requirements Notice -->
+        <div class="requirements-notice" *ngIf="hasEnterpriseRegistrations() && (regType === 'all' || regType === 'enterprise')">
+          <div class="notice-icon"><i class="fas fa-building"></i></div>
+          <div class="notice-content">
+            <h3>Enterprise Registration Requirements</h3>
+            <p>Enterprise accounts must have a minimum of <strong>50 orders per month</strong> to be approved.</p>
+          </div>
+        </div>
+        
+        <!-- Delivery Agent Requirements Notice -->
+        <div class="requirements-notice delivery-notice" *ngIf="hasDeliveryAgentRegistrations() && (regType === 'all' || regType === 'delivery-agent')">
+          <div class="notice-icon"><i class="fas fa-motorcycle"></i></div>
+          <div class="notice-content">
+            <h3>Delivery Agent Registration Requirements</h3>
+            <ul>
+              <li>Must have a valid driver's license</li>
+              <li>Minimum 2 years of delivery experience</li>
+              <li>Minimum delivery capacity of 10 packages per day</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="recent-orders" *ngIf="activeTab === 'orders'" [@fadeInAnimation]>
+        <h2>Recent Orders</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Client</th>
+                <th>Delivery Address</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders; let i = index" [@listAnimation]>
+                <td>{{ order.id }}</td>
+                <td>{{ order.client }}</td>
+                <td>{{ order.address }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="order.status.toLowerCase().replace(' ', '-')">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td><a href="#" class="btn-link">View</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="statistics-section" *ngIf="activeTab === 'statistics'" [@fadeInAnimation]>
+        <h2>User Statistics</h2>
+        <div class="statistics-grid">
+          <div class="stat-card">
+            <div class="stat-title">User Distribution</div>
+            <div class="stat-chart">
+              <div class="chart-bar enterprise" [style.width.%]="getEnterprisePercentage()">
+                {{ statisticsData.enterpriseUsers }}
+              </div>
+              <div class="chart-bar individual" [style.width.%]="getIndividualPercentage()">
+                {{ statisticsData.individualUsers }}
+              </div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-color enterprise"></span>
+                <span class="legend-label">Enterprise</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color individual"></span>
+                <span class="legend-label">Individual</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <div class="dashboard-nav">
+      <button 
+        class="nav-btn" 
+        [class.active]="activeTab === 'registrations'"
+        (click)="setActiveTab('registrations')">
+        <i class="fas fa-user-plus"></i> Registrations
+        <span class="badge" *ngIf="pendingRegistrations.length > 0">{{ pendingRegistrations.length }}</span>
+      </button>
+      <button 
+        class="nav-btn" 
+        [class.active]="activeTab === 'orders'"
+        (click)="setActiveTab('orders')">
+        <i class="fas fa-box-open"></i> Orders
+      </button>
+      <button 
+        class="nav-btn" 
+        [class.active]="activeTab === 'statistics'"
+        (click)="setActiveTab('statistics')">
+        <i class="fas fa-chart-bar"></i> Statistics
+      </button>
+      <a 
+        class="nav-btn" 
+        routerLink="/admin/delivery-agents">
+        <i class="fas fa-truck"></i> Delivery Agents
+      </a>
+    </div>
+  </div>
+  
+  <!-- Confirmation Modal -->
+  <div class="modal" *ngIf="showConfirmationModal" [@fadeInAnimation]>
+    <div class="modal-backdrop" (click)="closeConfirmationModal()"></div>
+    <div class="modal-content" [@slideUpAnimation]>
+      <div class="modal-header">
+        <h2>{{ confirmationData.title }}</h2>
+        <button class="close-btn" (click)="closeConfirmationModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{ confirmationData.message }}</p>
+        
+        <!-- Enterprise Warning -->
+        <div class="enterprise-warning" *ngIf="confirmationData.showEnterpriseWarning">
+          <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          <p>This enterprise doesn't meet the minimum requirement of 50 orders per month. Are you sure you want to approve?</p>
+        </div>
+        
+        <!-- Delivery Agent Warning -->
+        <div class="enterprise-warning delivery-warning" *ngIf="confirmationData.showDeliveryAgentWarning">
+          <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+          <p>This delivery agent doesn't meet one or more requirements:</p>
+          <ul>
+            <li>Valid driver's license</li>
+            <li>Minimum 2 years experience</li>
+            <li>Minimum delivery capacity of 10 packages</li>
+          </ul>
+          <p>Are you sure you want to approve?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeConfirmationModal()">Cancel</button>
+        <button type="button" [class]="'btn ' + confirmationData.confirmButtonClass" (click)="confirmAction()">
+          {{ confirmationData.confirmButtonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 

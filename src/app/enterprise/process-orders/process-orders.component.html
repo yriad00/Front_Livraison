@@ -1,0 +1,147 @@
+<div class="process-orders-container">
+  <div class="page-header">
+    <h1>Process Orders</h1>
+    <p>Assign agents and manage order processing</p>
+  </div>
+
+  <div class="process-content">
+    <!-- Order Selection Step -->
+    <div class="step-container" *ngIf="processingStep === 'select'">
+      <div class="step-header">
+        <h2>Step 1: Select Order</h2>
+        <p>Choose an order to process from the list below</p>
+      </div>
+      
+      <div class="orders-list">
+        <div class="order-card" *ngFor="let order of orders" [class.disabled]="order.status !== 'pending'" (click)="order.status === 'pending' && selectOrder(order)">
+          <div class="order-header">
+            <span class="order-id">Order #{{ order.id }}</span>
+            <span class="status-badge" [ngClass]="order.status">
+              {{ order.status.charAt(0).toUpperCase() + order.status.slice(1) }}
+            </span>
+          </div>
+          
+          <div class="order-details">
+            <div class="detail-row">
+              <span class="label">Customer:</span>
+              <span class="value">{{ order.customer }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Date:</span>
+              <span class="value">{{ order.date }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Amount:</span>
+              <span class="value">{{ order.amount }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Address:</span>
+              <span class="value">{{ order.address }}</span>
+            </div>
+            <div class="detail-row" *ngIf="order.agent">
+              <span class="label">Agent:</span>
+              <span class="value">{{ order.agent }}</span>
+            </div>
+          </div>
+          
+          <div class="order-actions" *ngIf="order.status === 'pending'">
+            <button class="btn-select">Select for Processing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Agent Assignment Step -->
+    <div class="step-container" *ngIf="processingStep === 'assign' && selectedOrder">
+      <div class="step-header">
+        <h2>Step 2: Assign Delivery Agent</h2>
+        <p>Select an agent to handle this order</p>
+      </div>
+      
+      <div class="selected-order">
+        <h3>Selected Order</h3>
+        <div class="order-summary">
+          <div class="summary-row">
+            <span class="label">Order ID:</span>
+            <span class="value">#{{ selectedOrder.id }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Customer:</span>
+            <span class="value">{{ selectedOrder.customer }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Delivery Address:</span>
+            <span class="value">{{ selectedOrder.address }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="agent-selection">
+        <h3>Select Delivery Agent</h3>
+        <div class="form-group">
+          <label for="agentSelect">Choose an agent:</label>
+          <select id="agentSelect" [(ngModel)]="selectedAgent" class="agent-select">
+            <option value="" disabled>-- Select Agent --</option>
+            <option *ngFor="let agent of availableAgents" [value]="agent">{{ agent }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="step-actions">
+        <button class="btn-cancel" (click)="cancelProcessing()">Cancel</button>
+        <button class="btn-next" [disabled]="!selectedAgent" (click)="assignAgent()">Next</button>
+      </div>
+    </div>
+    
+    <!-- Confirmation Step -->
+    <div class="step-container" *ngIf="processingStep === 'confirm' && selectedOrder">
+      <div class="step-header">
+        <h2>Step 3: Confirm Processing</h2>
+        <p>Review and confirm the order processing details</p>
+      </div>
+      
+      <div class="confirmation-details">
+        <div class="confirmation-section">
+          <h3>Order Information</h3>
+          <div class="confirmation-row">
+            <span class="label">Order ID:</span>
+            <span class="value">#{{ selectedOrder.id }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="label">Customer:</span>
+            <span class="value">{{ selectedOrder.customer }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="label">Amount:</span>
+            <span class="value">{{ selectedOrder.amount }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="label">Delivery Address:</span>
+            <span class="value">{{ selectedOrder.address }}</span>
+          </div>
+        </div>
+        
+        <div class="confirmation-section">
+          <h3>Processing Details</h3>
+          <div class="confirmation-row">
+            <span class="label">Assigned Agent:</span>
+            <span class="value">{{ selectedAgent }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="label">New Status:</span>
+            <span class="value status-badge processing">Processing</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="confirmation-message">
+        <p>By confirming, this order will be assigned to {{ selectedAgent }} and marked as "Processing". The delivery agent will be notified.</p>
+      </div>
+      
+      <div class="step-actions">
+        <button class="btn-cancel" (click)="cancelProcessing()">Cancel</button>
+        <button class="btn-confirm" (click)="confirmProcessing()">Confirm Processing</button>
+      </div>
+    </div>
+  </div>
+</div> 

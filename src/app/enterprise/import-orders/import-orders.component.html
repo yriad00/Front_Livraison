@@ -1,0 +1,111 @@
+<div class="import-orders-container">
+  <div class="page-header">
+    <h1>Import Orders</h1>
+    <p>Import your orders to the delivery platform</p>
+  </div>
+
+  <div class="import-methods">
+    <h2>Select Import Method</h2>
+    <div class="method-options">
+      <div class="method-option" [class.active]="importMethod === 'csv'" (click)="importMethod = 'csv'">
+        <i class="fa fa-file-excel-o"></i>
+        <h3>CSV Import</h3>
+        <p>Import orders from a CSV file</p>
+      </div>
+      <div class="method-option" [class.active]="importMethod === 'manual'" (click)="importMethod = 'manual'">
+        <i class="fa fa-keyboard-o"></i>
+        <h3>Manual Entry</h3>
+        <p>Enter orders manually</p>
+      </div>
+      <div class="method-option" [class.active]="importMethod === 'api'" (click)="importMethod = 'api'">
+        <i class="fa fa-plug"></i>
+        <h3>API Integration</h3>
+        <p>Connect to your system via API</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="import-content">
+    <!-- CSV Import Section -->
+    <div *ngIf="importMethod === 'csv'" class="csv-import">
+      <h2>CSV File Import</h2>
+      <p>Upload a CSV file with your orders. The file should contain the following columns:</p>
+      <ul class="requirements">
+        <li>Customer Name</li>
+        <li>Customer Phone</li>
+        <li>Customer Address</li>
+        <li>Product Information</li>
+        <li>Order Amount</li>
+        <li>Delivery Instructions (optional)</li>
+      </ul>
+      
+      <div class="file-upload">
+        <div class="upload-area" (click)="fileInput.click()" [class.has-file]="selectedFile">
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv" style="display: none">
+          <div *ngIf="!selectedFile" class="upload-prompt">
+            <i class="fa fa-cloud-upload"></i>
+            <p>Drag & drop your CSV file here or click to browse</p>
+          </div>
+          <div *ngIf="selectedFile" class="file-info">
+            <i class="fa fa-file-text-o"></i>
+            <p>{{ selectedFile.name }}</p>
+            <span>{{ (selectedFile.size / 1024).toFixed(2) }} KB</span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn-secondary" [disabled]="!selectedFile" (click)="fileInput.click()">Change File</button>
+          <button class="btn-primary" [disabled]="!selectedFile || isUploading" (click)="importOrders()">
+            <span *ngIf="!isUploading">Import Orders</span>
+            <span *ngIf="isUploading">Importing... <i class="fa fa-spinner fa-spin"></i></span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="sample-template">
+        <p>Don't have a template? <a href="#">Download a sample CSV template</a></p>
+      </div>
+    </div>
+
+    <!-- Manual Entry Section -->
+    <div *ngIf="importMethod === 'manual'" class="manual-entry">
+      <h2>Manual Order Entry</h2>
+      <p>Create a new order by entering details manually</p>
+      <button class="btn-primary">Create New Order</button>
+      
+      <!-- This would typically contain a form for manual order entry -->
+      <div class="coming-soon">
+        <p>The manual entry form is under development and will be available soon.</p>
+      </div>
+    </div>
+
+    <!-- API Integration Section -->
+    <div *ngIf="importMethod === 'api'" class="api-integration">
+      <h2>API Integration</h2>
+      <p>Connect your system directly to our platform</p>
+      
+      <div class="api-info">
+        <h3>API Endpoints</h3>
+        <div class="endpoint">
+          <span class="method">POST</span>
+          <span class="url">https://api.yourplatform.com/orders</span>
+          <button class="btn-copy">Copy</button>
+        </div>
+        
+        <h3>Authentication</h3>
+        <p>Use your API key to authenticate requests</p>
+        
+        <div class="api-key">
+          <span class="key-label">Your API Key:</span>
+          <span class="key-value">••••••••••••••••</span>
+          <button class="btn-secondary">Show Key</button>
+          <button class="btn-secondary">Generate New Key</button>
+        </div>
+        
+        <h3>Documentation</h3>
+        <p>For detailed API documentation, please visit our developer portal</p>
+        <button class="btn-secondary">View API Documentation</button>
+      </div>
+    </div>
+  </div>
+</div> 

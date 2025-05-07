@@ -1,0 +1,37 @@
+<div class="history-container">
+  <h2>Delivery History</h2>
+  
+  <div class="filter-section">
+    <button (click)="filterDeliveries()">All</button>
+    <button (click)="filterDeliveries('completed')">Completed</button>
+    <button (click)="filterDeliveries('canceled')">Canceled</button>
+    <button (click)="filterDeliveries('returned')">Returned</button>
+  </div>
+  
+  <div class="history-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Address</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let delivery of deliveryHistory">
+          <td>{{ delivery.orderId }}</td>
+          <td>{{ delivery.date | date }}</td>
+          <td>{{ delivery.clientName }}</td>
+          <td>{{ delivery.address }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="delivery.status">
+              {{ delivery.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

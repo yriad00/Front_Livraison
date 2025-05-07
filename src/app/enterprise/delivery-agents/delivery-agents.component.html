@@ -1,0 +1,97 @@
+<div class="agents-container">
+  <div class="header-section">
+    <h2>Delivery Agents</h2>
+    <button class="btn-add" (click)="toggleAddForm()">
+      {{ showAddForm ? 'Cancel' : 'Add New Agent' }}
+    </button>
+  </div>
+  
+  <div class="agent-form" *ngIf="showAddForm">
+    <h3>{{ editingAgentId ? 'Edit Agent' : 'Add New Agent' }}</h3>
+    <form [formGroup]="agentForm" (ngSubmit)="saveAgent()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" formControlName="name" placeholder="Enter full name">
+        <div class="error-message" *ngIf="agentForm.get('name')?.invalid && agentForm.get('name')?.touched">
+          Name is required
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter email address">
+        <div class="error-message" *ngIf="agentForm.get('email')?.invalid && agentForm.get('email')?.touched">
+          <span *ngIf="agentForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="agentForm.get('email')?.errors?.['email']">Enter a valid email address</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" formControlName="phone" placeholder="Enter phone number">
+        <div class="error-message" *ngIf="agentForm.get('phone')?.invalid && agentForm.get('phone')?.touched">
+          Phone number is required
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="on-leave">On Leave</option>
+        </select>
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" [disabled]="agentForm.invalid">
+          {{ editingAgentId ? 'Update Agent' : 'Add Agent' }}
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="filter-section">
+    <button (click)="filterAgents('all')">All</button>
+    <button (click)="filterAgents('active')">Active</button>
+    <button (click)="filterAgents('inactive')">Inactive</button>
+    <button (click)="filterAgents('on-leave')">On Leave</button>
+  </div>
+  
+  <div class="agents-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Status</th>
+          <th>Rating</th>
+          <th>Deliveries</th>
+          <th>Join Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let agent of filteredAgents">
+          <td>{{ agent.name }}</td>
+          <td>
+            <div>{{ agent.email }}</div>
+            <div>{{ agent.phone }}</div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="agent.status">
+              {{ agent.status }}
+            </span>
+          </td>
+          <td>{{ agent.rating }} / 5</td>
+          <td>{{ agent.deliveriesCompleted }}</td>
+          <td>{{ agent.joinDate | date }}</td>
+          <td class="actions">
+            <button class="btn-edit" (click)="editAgent(agent)">Edit</button>
+            <button class="btn-delete" (click)="deleteAgent(agent.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

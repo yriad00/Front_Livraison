@@ -1,0 +1,36 @@
+<div class="reviews-container">
+  <h2>Client Reviews</h2>
+  
+  <div class="filter-section">
+    <span>Filter by rating: </span>
+    <button (click)="filterReviews(1)">All</button>
+    <button (click)="filterReviews(5)">★★★★★</button>
+    <button (click)="filterReviews(4)">★★★★+</button>
+    <button (click)="filterReviews(3)">★★★+</button>
+    <button (click)="filterReviews(2)">★★+</button>
+  </div>
+  
+  <div class="reviews-list">
+    <div *ngFor="let review of reviews" class="review-card">
+      <div class="review-header">
+        <div class="client-info">
+          <h3>{{ review.clientName }}</h3>
+          <span class="order-id">Order: {{ review.orderId }}</span>
+        </div>
+        
+        <div class="rating">
+          <span *ngFor="let star of getStars(review.rating)" class="star filled">★</span>
+          <span *ngFor="let star of getEmptyStars(review.rating)" class="star">★</span>
+        </div>
+      </div>
+      
+      <div class="review-body">
+        <p>{{ review.comment }}</p>
+      </div>
+      
+      <div class="review-footer">
+        <span class="date">{{ review.date | date }}</span>
+      </div>
+    </div>
+  </div>
+</div>

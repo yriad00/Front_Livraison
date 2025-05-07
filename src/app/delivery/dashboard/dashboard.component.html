@@ -1,0 +1,110 @@
+<div class="delivery-dashboard">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <i class="fa fa-bars"></i> Menu
+  </button>
+  <nav class="sidebar" [ngClass]="{'collapsed': isSidebarCollapsed}">
+    <div class="sidebar-header">
+      <h2>Delivery Agent</h2>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/delivery/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/delivery/orders" routerLinkActive="active">Order Queue</a></li>
+      <li><a routerLink="/delivery/map" routerLinkActive="active">Navigation Map</a></li>
+      <li><a routerLink="/delivery/history" routerLinkActive="active">Delivery History</a></li>
+      <li><a routerLink="/delivery/reviews" routerLinkActive="active">Customer Reviews</a></li>
+      <li class="logout"><a (click)="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content" [ngClass]="{'sidebar-open': !isSidebarCollapsed}">
+    <header class="dashboard-header">
+      <h1>Delivery Agent Dashboard</h1>
+      <div class="user-info" *ngIf="currentUser">
+        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+      </div>
+    </header>
+
+    <div class="dashboard-content" @fadeIn>
+      <div class="dashboard-summary" @cardAnimation>
+        <div class="summary-card">
+          <h3>Active Deliveries</h3>
+          <p class="summary-count">{{ activeDeliveries }}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Completed Today</h3>
+          <p class="summary-count">{{ completedToday }}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Today's Earnings</h3>
+          <p class="summary-count">€{{ earnings }}</p>
+        </div>
+        <div class="summary-card">
+          <h3>Rating</h3>
+          <p class="summary-count">4.8</p>
+          <div class="rating">
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star half">★</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-sections" @fadeIn>
+        <section class="current-deliveries">
+          <div class="section-header">
+            <h2>Current Deliveries</h2>
+            <a routerLink="/delivery/orders" class="view-all">View All</a>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Client</th>
+                  <th>Delivery Address</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1002</td>
+                  <td>Jane Smith</td>
+                  <td>456 Avenue des Champs-Élysées, Paris</td>
+                  <td><span class="status pending">Pending</span></td>
+                  <td>
+                    <button class="btn btn-primary">Start</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>1003</td>
+                  <td>Robert Johnson</td>
+                  <td>789 Boulevard Saint-Germain, Paris</td>
+                  <td><span class="status in-progress">In Progress</span></td>
+                  <td>
+                    <button class="btn btn-success">Update Status</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="delivery-map">
+          <div class="section-header">
+            <h2>Delivery Map</h2>
+            <a routerLink="/delivery/map" class="view-full">Full Map</a>
+          </div>
+          <div class="map-placeholder">
+            <div class="map-info">
+              <p>Your delivery routes</p>
+              <p class="map-note">Interactive map showing your active delivery routes</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div> 

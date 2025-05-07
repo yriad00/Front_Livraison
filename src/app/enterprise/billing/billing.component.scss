@@ -1,0 +1,382 @@
+.billing-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 28px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+h3 {
+  color: #34495e;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+// Subscription Status Card
+.subscription-status {
+  margin-bottom: 30px;
+}
+
+.status-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.trial {
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #c3e8fa 0%, #96e6a1 100%);
+  }
+  
+  &.expired {
+    background: linear-gradient(135deg, #fad0c4 0%, #f1a7a7 100%);
+  }
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  
+  h3 {
+    margin: 0;
+    color: #2c3e50;
+  }
+  
+  .badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    
+    &.trial {
+      background-color: #8e44ad;
+      color: white;
+    }
+    
+    &.active {
+      background-color: #27ae60;
+      color: white;
+    }
+    
+    &.expired {
+      background-color: #e74c3c;
+      color: white;
+    }
+  }
+}
+
+.status-details {
+  p {
+    margin: 10px 0;
+    font-size: 16px;
+    
+    strong {
+      color: #34495e;
+      margin-right: 5px;
+    }
+  }
+}
+
+// Subscription Plans
+.subscription-plans {
+  margin-bottom: 40px;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.plan-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.plan-header {
+  padding: 20px;
+  background-color: #f8f9fa;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  
+  h4 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 22px;
+  }
+  
+  .price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3498db;
+  }
+}
+
+.plan-features {
+  padding: 20px;
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+      position: relative;
+      padding-left: 25px;
+      
+      &:before {
+        content: '✓';
+        color: #27ae60;
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.plan-footer {
+  padding: 20px;
+  text-align: center;
+  
+  button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    
+    &:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+    
+    &:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// Payment Methods
+.payment-methods {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  margin-bottom: 40px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #34495e;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  
+  button {
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &[type="button"] {
+      background-color: #ecf0f1;
+      color: #34495e;
+      border: 1px solid #ddd;
+      
+      &:hover {
+        background-color: #dde4e6;
+      }
+    }
+    
+    &[type="submit"] {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      
+      &:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+      
+      &:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+}
+
+// Billing History
+.billing-history {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ecf0f1;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #34495e;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    tr:hover td {
+      background-color: #f9f9f9;
+    }
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+    
+    &.paid {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    &.pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    &.failed {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  }
+  
+  button {
+    padding: 6px 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #2980b9;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .billing-container {
+    padding: 15px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+}

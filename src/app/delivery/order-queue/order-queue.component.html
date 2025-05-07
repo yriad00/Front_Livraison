@@ -1,0 +1,101 @@
+<div class="order-queue-container">
+  <div class="page-header">
+    <h1>Order Queue</h1>
+    <p>Available orders for delivery</p>
+  </div>
+
+  <div class="order-sections">
+    <section class="pending-orders">
+      <h2>Available Orders ({{ orders.length }})</h2>
+      
+      <div *ngIf="orders.length === 0" class="no-orders">
+        <p>No new orders available at the moment</p>
+      </div>
+      
+      <div class="order-cards">
+        <div class="order-card" *ngFor="let order of orders">
+          <div class="order-header">
+            <span class="order-id">Order #{{ order.id }}</span>
+            <span class="order-distance">{{ order.distance }}</span>
+          </div>
+          
+          <div class="order-body">
+            <div class="order-client">
+              <h3>Client</h3>
+              <p>{{ order.client }}</p>
+            </div>
+            
+            <div class="order-address">
+              <h3>Delivery Address</h3>
+              <p>{{ order.address }}</p>
+            </div>
+            
+            <div class="order-time">
+              <h3>Estimated Time</h3>
+              <p>{{ order.estimatedTime }}</p>
+            </div>
+          </div>
+          
+          <div class="order-actions">
+            <button class="btn-reject" (click)="rejectOrder(order)">Reject</button>
+            <button class="btn-accept" (click)="acceptOrder(order)">Accept</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="accepted-orders" *ngIf="acceptedOrders.length > 0">
+      <h2>Accepted Orders ({{ acceptedOrders.length }})</h2>
+      
+      <div class="order-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Client</th>
+              <th>Address</th>
+              <th>Est. Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of acceptedOrders">
+              <td>{{ order.id }}</td>
+              <td>{{ order.client }}</td>
+              <td>{{ order.address }}</td>
+              <td>{{ order.estimatedTime }}</td>
+              <td>
+                <a [routerLink]="['/delivery/delivery', order.id]" class="btn-view">View Details</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="rejected-orders" *ngIf="rejectedOrders.length > 0">
+      <h2>Rejected Orders ({{ rejectedOrders.length }})</h2>
+      
+      <div class="order-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Client</th>
+              <th>Address</th>
+              <th>Distance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of rejectedOrders">
+              <td>{{ order.id }}</td>
+              <td>{{ order.client }}</td>
+              <td>{{ order.address }}</td>
+              <td>{{ order.distance }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

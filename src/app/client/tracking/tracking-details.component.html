@@ -1,0 +1,87 @@
+<div class="tracking-details">
+  <div class="tracking-header">
+    <h1>Order Tracking</h1>
+    <div class="order-info" *ngIf="order">
+      <h2>Order #{{ orderId }}</h2>
+      <p>Placed on: {{ order.orderDate | date:'medium' }}</p>
+      <p>Delivery to: {{ order.deliveryAddress }}</p>
+    </div>
+    <div class="order-info" *ngIf="!order">
+      <h2>Order #{{ orderId }}</h2>
+      <p>Loading order details...</p>
+    </div>
+    <a [routerLink]="['/client']" class="back-link">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="tracking-container">
+    <div class="tracking-map">
+      <h3>Delivery Location</h3>
+      <div class="map-container">
+        <img [src]="getMapUrl()" alt="Delivery Map" class="map-image">
+      </div>
+    </div>
+
+    <div class="tracking-status">
+      <h3>Delivery Status</h3>
+      <div class="delivery-timeline">
+        <div *ngFor="let step of deliverySteps" class="timeline-step" 
+            [ngClass]="{'active': step.active, 'completed': step.completed}">
+          <div class="step-indicator">
+            <div class="step-icon">
+              <i class="check-icon" *ngIf="step.completed">✓</i>
+            </div>
+          </div>
+          <div class="step-content">
+            <h4>{{ step.title }}</h4>
+            <p class="step-time">{{ step.time }}</p>
+            <p class="step-description">{{ step.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="delivery-agent">
+    <h3>Delivery Agent</h3>
+    <div class="agent-info">
+      <div class="agent-photo">
+        <img [src]="deliveryAgent.photo" alt="Delivery Agent">
+      </div>
+      <div class="agent-details">
+        <h4>{{ deliveryAgent.name }}</h4>
+        <p><strong>Phone:</strong> {{ deliveryAgent.phone }}</p>
+        <p><strong>Vehicle:</strong> {{ deliveryAgent.vehicle }}</p>
+        <p><strong>Rating:</strong> {{ deliveryAgent.rating }} / 5</p>
+      </div>
+      <div class="agent-actions">
+        <button class="btn btn-primary" (click)="contactDeliveryAgent()">Contact Agent</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-details" *ngIf="order">
+    <h3>Order Details</h3>
+    <div class="order-items">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of order.items; let i = index">
+            <td>{{ item }}</td>
+            <td>1</td>
+            <td>In Transit</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="delivery-notes" *ngIf="order.deliveryNotes">
+      <h4>Delivery Notes</h4>
+      <p>{{ order.deliveryNotes }}</p>
+    </div>
+  </div>
+</div> 

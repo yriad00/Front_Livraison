@@ -1,0 +1,69 @@
+<div class="subscription-container">
+  <div class="page-header">
+    <h1>Subscription Plans</h1>
+    <p>Choose the right plan for your business</p>
+  </div>
+
+  <div class="plans-container">
+    <div *ngFor="let plan of plans" class="plan-card" [class.recommended]="plan.recommended" [class.selected]="currentPlan === plan.name">
+      <div class="plan-badge" *ngIf="plan.recommended">RECOMMENDED</div>
+      <div class="plan-header">
+        <h2>{{ plan.name }}</h2>
+        <div class="plan-price">
+          <span class="currency">€</span>
+          <span class="amount">{{ plan.price }}</span>
+          <span class="period">/month</span>
+        </div>
+      </div>
+      
+      <div class="plan-features">
+        <ul>
+          <li *ngFor="let feature of plan.features">{{ feature }}</li>
+        </ul>
+      </div>
+      
+      <div class="plan-actions">
+        <button 
+          class="btn-select" 
+          (click)="selectPlan(plan.name)" 
+          [class.active]="currentPlan === plan.name"
+          [disabled]="currentPlan === plan.name"
+        >
+          {{ currentPlan === plan.name ? 'Current Plan' : 'Select Plan' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="subscription-summary">
+    <div class="summary-header">
+      <h2>Summary</h2>
+    </div>
+    
+    <div class="summary-content">
+      <div class="summary-item">
+        <span class="item-label">Selected Plan:</span>
+        <span class="item-value">{{ currentPlan }}</span>
+      </div>
+      
+      <div class="summary-item">
+        <span class="item-label">Billing Cycle:</span>
+        <span class="item-value">Monthly</span>
+      </div>
+      
+      <div class="summary-item total">
+        <span class="item-label">Total:</span>
+        <span class="item-value">
+          €{{ getPlanPrice() }}/month
+        </span>
+      </div>
+    </div>
+    
+    <div class="summary-actions">
+      <button class="btn-upgrade" (click)="upgradePlan()">
+        Upgrade Subscription
+      </button>
+      <p class="info">You can change or cancel your plan at any time</p>
+    </div>
+  </div>
+</div> 

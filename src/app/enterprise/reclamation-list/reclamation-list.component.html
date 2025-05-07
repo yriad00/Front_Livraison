@@ -1,0 +1,57 @@
+<div class="reclamation-container" @fadeIn>
+  <div class="header-actions">
+    <h2>Client Reclamations</h2>
+    <button class="platform-issue-btn" (click)="togglePlatformIssueForm()">
+      {{ showPlatformIssueForm ? 'Cancel' : 'Report Platform Issue' }}
+    </button>
+  </div>
+  
+  <div class="platform-issue-form" *ngIf="showPlatformIssueForm" @fadeIn>
+    <h3>Report Platform Issue to Admin</h3>
+    <div class="form-group">
+      <label for="issueTitle">Issue Title</label>
+      <input type="text" id="issueTitle" [(ngModel)]="newPlatformIssue.issue" placeholder="Brief description of the platform issue">
+    </div>
+    <div class="form-group">
+      <label for="issueDescription">Description</label>
+      <textarea id="issueDescription" [(ngModel)]="newPlatformIssue.description" rows="4" placeholder="Please provide detailed information about the platform issue"></textarea>
+    </div>
+    <button class="submit-btn" [disabled]="!newPlatformIssue.issue || !newPlatformIssue.description" (click)="submitPlatformIssue()">Submit Issue</button>
+  </div>
+  
+  <div class="filters" @fadeIn>
+    <button (click)="filterByStatus('all')">All</button>
+    <button (click)="filterByStatus('new')">New</button>
+    <button (click)="filterByStatus('in-progress')">In Progress</button>
+    <button (click)="filterByStatus('resolved')">Resolved</button>
+    <button (click)="filterByStatus('closed')">Closed</button>
+    <button class="platform-filter" (click)="filterByStatus('platform')">Platform Issues</button>
+  </div>
+  
+  <div class="reclamations-list" [@listAnimation]="filteredReclamations.length">
+    <div *ngFor="let reclamation of filteredReclamations" class="reclamation-card" @fadeIn>
+      <div class="reclamation-header">
+        <span class="reclamation-id">
+          <span *ngIf="!reclamation.isPlatformIssue">Reclamation #{{ reclamation.id }}</span>
+          <span *ngIf="reclamation.isPlatformIssue" class="platform-issue-badge">Platform Issue #{{ reclamation.id }}</span>
+        </span>
+        <span class="reclamation-status" [ngClass]="reclamation.status">{{ reclamation.status }}</span>
+      </div>
+      <div class="reclamation-details">
+        <p><strong>Client:</strong> {{ reclamation.clientName }}</p>
+        <p><strong>Order ID:</strong> {{ reclamation.orderId }}</p>
+        <p><strong>Submission Date:</strong> {{ reclamation.submissionDate | date }}</p>
+        <p><strong>Issue:</strong> {{ reclamation.issue }}</p>
+      </div>
+      <div class="reclamation-description">
+        <p>{{ reclamation.description }}</p>
+      </div>
+      <div class="reclamation-actions">
+        <button (click)="viewDetails(reclamation.id)">View Details</button>
+        <button (click)="updateStatus(reclamation.id, 'in-progress')" *ngIf="reclamation.status === 'new'">Process</button>
+        <button (click)="updateStatus(reclamation.id, 'resolved')" *ngIf="reclamation.status === 'in-progress'">Mark Resolved</button>
+        <button (click)="updateStatus(reclamation.id, 'closed')" *ngIf="reclamation.status === 'resolved'">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

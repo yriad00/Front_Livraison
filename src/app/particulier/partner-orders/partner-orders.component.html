@@ -1,0 +1,177 @@
+<div class="partner-orders-container">
+  <h2>Partner Orders Management</h2>
+
+  <div class="actions-bar">
+    <button class="add-btn" (click)="openAddOrderForm()">Add New Order</button>
+    <div class="search-container">
+      <input type="text" placeholder="Search orders..." [(ngModel)]="searchTerm" (keyup)="searchOrders()">
+      <button class="search-btn"><i class="search-icon"></i></button>
+    </div>
+    <div class="filter-container">
+      <select [(ngModel)]="statusFilter" (change)="filterOrders()">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="in-progress">In Progress</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="orders-table-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Client Name</th>
+          <th>Delivery Address</th>
+          <th>Order Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of filteredOrders">
+          <td>{{ order.id }}</td>
+          <td>{{ order.clientName }}</td>
+          <td>{{ order.deliveryAddress }}</td>
+          <td>{{ order.orderDate | date }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="order.status">{{ order.status }}</span>
+          </td>
+          <td class="actions">
+            <button class="action-btn edit" (click)="editOrder(order.id)">Edit</button>
+            <button class="action-btn view" (click)="viewOrderDetails(order.id)">View</button>
+            <button class="action-btn delete" (click)="deleteOrder(order.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">Previous</button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">Next</button>
+  </div>
+
+  <!-- Add/Edit Order Modal -->
+  <div class="modal" *ngIf="showOrderForm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ isEditMode ? 'Edit Order' : 'Add New Order' }}</h3>
+        <button class="close-btn" (click)="closeOrderForm()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="orderForm" (ngSubmit)="saveOrder()">
+          <div class="form-group">
+            <label for="clientName">Client Name</label>
+            <input type="text" id="clientName" formControlName="clientName">
+            <div class="error-message" *ngIf="orderForm.get('clientName')?.invalid && orderForm.get('clientName')?.touched">
+              Client name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="clientPhone">Client Phone</label>
+            <input type="text" id="clientPhone" formControlName="clientPhone">
+            <div class="error-message" *ngIf="orderForm.get('clientPhone')?.invalid && orderForm.get('clientPhone')?.touched">
+              Valid phone number is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="deliveryAddress">Delivery Address</label>
+            <textarea id="deliveryAddress" formControlName="deliveryAddress"></textarea>
+            <div class="error-message" *ngIf="orderForm.get('deliveryAddress')?.invalid && orderForm.get('deliveryAddress')?.touched">
+              Delivery address is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="orderItems">Order Items</label>
+            <textarea id="orderItems" formControlName="orderItems" placeholder="Item 1, Item 2, ..."></textarea>
+            <div class="error-message" *ngIf="orderForm.get('orderItems')?.invalid && orderForm.get('orderItems')?.touched">
+              Order items are required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="orderStatus">Status</label>
+            <select id="orderStatus" formControlName="status">
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" (click)="closeOrderForm()">Cancel</button>
+            <button type="submit" [disabled]="orderForm.invalid">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal" *ngIf="showOrderDetails && selectedOrder">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Order Details</h3>
+        <button class="close-btn" (click)="closeOrderDetails()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="details-section">
+          <h4>Order Information</h4>
+          <div class="detail-row">
+            <span class="label">Order ID:</span>
+            <span class="value">{{ selectedOrder.id }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Date:</span>
+            <span class="value">{{ selectedOrder.orderDate | date:'medium' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Status:</span>
+            <span class="value status-badge" [ngClass]="selectedOrder.status">{{ selectedOrder.status }}</span>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h4>Client Information</h4>
+          <div class="detail-row">
+            <span class="label">Name:</span>
+            <span class="value">{{ selectedOrder.clientName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Phone:</span>
+            <span class="value">{{ selectedOrder.clientPhone }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Address:</span>
+            <span class="value">{{ selectedOrder.deliveryAddress }}</span>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <h4>Order Items</h4>
+          <ul class="items-list">
+            <li *ngFor="let item of selectedOrder.items">{{ item }}</li>
+          </ul>
+        </div>
+
+        <div class="details-section" *ngIf="selectedOrder.deliveryNotes">
+          <h4>Delivery Notes</h4>
+          <p>{{ selectedOrder.deliveryNotes }}</p>
+        </div>
+
+        <div class="modal-actions">
+          <button (click)="closeOrderDetails()">Close</button>
+          <button (click)="editOrder(selectedOrder.id)">Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="platform-issue-container">
+  <header class="page-header">
+    <h1>Report Platform Issue</h1>
+  </header>
+
+  <div class="issue-content">
+    <!-- Success message after submission -->
+    <div class="success-message" *ngIf="isSubmitted">
+      <div class="success-icon">✓</div>
+      <h2>Thank you for your report!</h2>
+      <p>Your issue has been submitted successfully. Our support team will review it and get back to you as soon as possible.</p>
+      <button class="btn-primary" (click)="startNewIssue()">Report Another Issue</button>
+    </div>
+
+    <!-- Issue submission form -->
+    <div class="issue-form" *ngIf="!isSubmitted">
+      <form (ngSubmit)="submitIssue()">
+        <div class="form-group">
+          <label for="category">Issue Category *</label>
+          <select id="category" name="category" [(ngModel)]="issueForm.category" required>
+            <option value="">Select a category</option>
+            <option *ngFor="let category of issueCategories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="title">Issue Title *</label>
+          <input type="text" id="title" name="title" [(ngModel)]="issueForm.title" placeholder="Brief description of the issue" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Detailed Description *</label>
+          <textarea id="description" name="description" rows="5" [(ngModel)]="issueForm.description" placeholder="Please provide as much detail as possible about the issue you're experiencing" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="urgency">Urgency</label>
+          <select id="urgency" name="urgency" [(ngModel)]="issueForm.urgency">
+            <option value="low">Low - Not affecting my usage</option>
+            <option value="medium">Medium - Causing some inconvenience</option>
+            <option value="high">High - Preventing me from using the platform</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="attachments">Attachments (Optional)</label>
+          <div class="file-upload">
+            <input type="file" id="attachments" multiple (change)="onFileSelected($event)">
+            <label for="attachments" class="file-upload-label">
+              <span class="upload-icon">📎</span>
+              <span>Choose files</span>
+            </label>
+          </div>
+          <div class="attachments-list" *ngIf="issueForm.attachments.length > 0">
+            <div class="attachment-item" *ngFor="let file of issueForm.attachments; let i = index">
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+              <button type="button" class="btn-remove" (click)="removeAttachment(i)">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" [disabled]="!issueForm.category || !issueForm.title || !issueForm.description || isSubmitting">
+            <span *ngIf="!isSubmitting">Submit Issue</span>
+            <span *ngIf="isSubmitting">Submitting...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Previous issues -->
+    <div class="previous-issues">
+      <h2>Previous Issues</h2>
+      <div class="issues-table-container">
+        <table class="issues-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Title</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let issue of previousIssues">
+              <td>{{ issue.id }}</td>
+              <td>{{ issue.date }}</td>
+              <td>{{ issue.category }}</td>
+              <td>{{ issue.title }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="issue.status.toLowerCase().replace(' ', '-')">
+                  {{ issue.status }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="previousIssues.length === 0">
+              <td colspan="5" class="no-issues">You haven't reported any issues yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

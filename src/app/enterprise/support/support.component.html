@@ -1,0 +1,62 @@
+<div class="support-container">
+  <h2>Enterprise Support Center</h2>
+  
+  <div class="support-content">
+    <div class="new-ticket-section">
+      <h3>Submit a New Support Ticket</h3>
+      
+      <form [formGroup]="supportForm" (ngSubmit)="submitTicket()">
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" formControlName="subject" placeholder="Brief description of your platform issue">
+          <div class="error-message" *ngIf="supportForm.get('subject')?.invalid && supportForm.get('subject')?.touched">
+            Subject is required
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" formControlName="message" rows="5" placeholder="Please describe your platform issue in detail"></textarea>
+          <div class="error-message" *ngIf="supportForm.get('message')?.invalid && supportForm.get('message')?.touched">
+            <span *ngIf="supportForm.get('message')?.errors?.['required']">Message is required</span>
+            <span *ngIf="supportForm.get('message')?.errors?.['minlength']">Message must be at least 10 characters</span>
+          </div>
+        </div>
+        
+        <button type="submit" [disabled]="supportForm.invalid">Submit Ticket</button>
+      </form>
+    </div>
+    
+    <div class="tickets-section">
+      <h3>Your Support Tickets</h3>
+      
+      <div class="filter-buttons">
+        <button (click)="filterTickets()">All</button>
+        <button (click)="filterTickets('open')">Open</button>
+        <button (click)="filterTickets('in-progress')">In Progress</button>
+        <button (click)="filterTickets('resolved')">Resolved</button>
+      </div>
+      
+      <div class="tickets-list">
+        <div *ngFor="let ticket of supportTickets" class="ticket-card">
+          <div class="ticket-header">
+            <h4>{{ ticket.subject }}</h4>
+            <span class="status-badge" [ngClass]="ticket.status">{{ ticket.status }}</span>
+          </div>
+          
+          <div class="ticket-body">
+            <p>{{ ticket.message }}</p>
+          </div>
+          
+          <div class="ticket-footer">
+            <span class="date">Submitted on: {{ ticket.date | date }}</span>
+          </div>
+        </div>
+        
+        <div *ngIf="supportTickets.length === 0" class="no-tickets">
+          <p>No tickets found matching the selected filter.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

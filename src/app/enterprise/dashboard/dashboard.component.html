@@ -1,0 +1,106 @@
+<div class="enterprise-dashboard">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <span *ngIf="isSidebarCollapsed">☰</span>
+    <span *ngIf="!isSidebarCollapsed">✕</span>
+  </button>
+  <nav class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <h2>Enterprise Portal</h2>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/enterprise/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/enterprise/import-orders" routerLinkActive="active">Import Orders</a></li>
+      <li><a routerLink="/enterprise/all-orders" routerLinkActive="active">All Orders</a></li>
+      <li><a routerLink="/enterprise/process-orders" routerLinkActive="active">Process Orders</a></li>
+      <li><a routerLink="/enterprise/agents" routerLinkActive="active">Available Agents</a></li>
+      <li><a routerLink="/enterprise/delivery-agents" routerLinkActive="active">Delivery Agents</a></li>
+      <li><a routerLink="/enterprise/reclamations" routerLinkActive="active">Client Reclamations</a></li>
+      <li><a routerLink="/enterprise/platform-issue" routerLinkActive="active">Platform Issue</a></li>
+      <li><a routerLink="/enterprise/billing" routerLinkActive="active">Billing</a></li>
+      <li><a routerLink="/enterprise/subscription" routerLinkActive="active">Subscription</a></li>
+      <li class="logout"><a (click)="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <header class="dashboard-header">
+      <h1>Enterprise Dashboard</h1>
+      <div class="user-info" *ngIf="currentUser">
+        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="dashboard-summary">
+        <div class="summary-card">
+          <h3>Active Orders</h3>
+          <p class="summary-count">15</p>
+        </div>
+        <div class="summary-card">
+          <h3>Total Orders</h3>
+          <p class="summary-count">87</p>
+        </div>
+        <div class="summary-card">
+          <h3>Active Deliveries</h3>
+          <p class="summary-count">7</p>
+        </div>
+        <div class="summary-card">
+          <h3>Employees</h3>
+          <p class="summary-count">23</p>
+        </div>
+      </div>
+
+      <div class="dashboard-sections">
+        <section class="recent-orders">
+          <h2>Recent Orders</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1002</td>
+                  <td>ABC Corporation</td>
+                  <td>Apr 16, 2023</td>
+                  <td>In Progress</td>
+                  <td><a href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td>1001</td>
+                  <td>XYZ Ltd</td>
+                  <td>Apr 15, 2023</td>
+                  <td>Delivered</td>
+                  <td><a href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td>998</td>
+                  <td>Tech Solutions</td>
+                  <td>Apr 10, 2023</td>
+                  <td>Delivered</td>
+                  <td><a href="#">View</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="analytics">
+          <h2>Business Analytics</h2>
+          <div class="chart-placeholder">
+            <div class="chart-info">
+              <p>Monthly Order Summary</p>
+              <p class="chart-note">Charts and analytics will be displayed here</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div> 

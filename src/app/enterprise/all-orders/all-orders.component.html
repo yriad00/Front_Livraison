@@ -1,0 +1,79 @@
+<div class="all-orders-container">
+  <div class="page-header">
+    <h1>All Orders</h1>
+    <p>Manage and view all orders from your business</p>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Search by ID, customer or address..."
+        class="search-input"
+      >
+    </div>
+    
+    <div class="status-filter">
+      <label>Filter by Status:</label>
+      <select [(ngModel)]="statusFilter" class="status-select">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="orders-table-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredOrders.length === 0">
+          <td colspan="6" class="no-orders">No orders found with the current filters</td>
+        </tr>
+        <tr *ngFor="let order of filteredOrders">
+          <td>{{ order.id }}</td>
+          <td>{{ order.customer }}</td>
+          <td>{{ order.date }}</td>
+          <td>{{ order.amount }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="order.status">
+              {{ order.status.charAt(0).toUpperCase() + order.status.slice(1) }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-view" (click)="viewOrderDetails(order.id)">
+              View
+            </button>
+            <button class="btn-delete" (click)="deleteOrder(order.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <div class="page-info">Showing {{ filteredOrders.length }} of {{ orders.length }} orders</div>
+    <div class="page-controls">
+      <button class="btn-page" disabled>&laquo; Previous</button>
+      <button class="btn-page active">1</button>
+      <button class="btn-page">2</button>
+      <button class="btn-page">3</button>
+      <button class="btn-page">Next &raquo;</button>
+    </div>
+  </div>
+</div> 

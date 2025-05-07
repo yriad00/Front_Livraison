@@ -1,0 +1,30 @@
+<div class="delivery-layout">
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    <i class="fa fa-bars"></i> Menu
+  </button>
+  
+  <nav class="sidebar" [ngClass]="{'collapsed': isSidebarCollapsed}">
+    <div class="sidebar-header">
+      <h2>Delivery Agent</h2>
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/delivery/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/delivery/orders" routerLinkActive="active">Order Queue</a></li>
+      <li><a routerLink="/delivery/map" routerLinkActive="active">Navigation Map</a></li>
+      <li><a routerLink="/delivery/history" routerLinkActive="active">Delivery History</a></li>
+      <li><a routerLink="/delivery/reviews" routerLinkActive="active">Customer Reviews</a></li>
+      <li><a routerLink="/delivery/support" routerLinkActive="active">Support</a></li>
+      <li class="logout"><a (click)="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content" [ngClass]="{'sidebar-open': !isSidebarCollapsed}">
+    <div class="user-info" *ngIf="currentUser">
+      <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+    </div>
+    
+    <div class="content-container" @fadeIn>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
