@@ -125,10 +125,10 @@ export class DashboardComponent implements OnInit {
   ];
   
   reclamations = [
-    { id: 'REC-2023-001', orderId: 'ORD-2023-001', date: '2023-12-16', issue: 'Damaged Product', status: 'Resolved' },
-    { id: 'REC-2023-002', orderId: 'ORD-2023-004', date: '2023-11-07', issue: 'Missing Item', status: 'Resolved' },
-    { id: 'REC-2023-003', orderId: 'ORD-2023-005', date: '2023-11-18', issue: 'Wrong Product', status: 'Resolved' },
-    { id: 'REC-2023-004', orderId: 'ORD-2023-002', date: '2023-12-22', issue: 'Delayed Delivery', status: 'Pending' }
+    { id: 'REC-2023-001', orderId: 'ORD-2023-001', date: '2023-12-16', issue: 'Produit Endommagé', status: 'Resolved' },
+    { id: 'REC-2023-002', orderId: 'ORD-2023-004', date: '2023-11-07', issue: 'Article Manquant', status: 'Resolved' },
+    { id: 'REC-2023-003', orderId: 'ORD-2023-005', date: '2023-11-18', issue: 'Produit Incorrect', status: 'Resolved' },
+    { id: 'REC-2023-004', orderId: 'ORD-2023-002', date: '2023-12-22', issue: 'Retard de Livraison', status: 'Pending' }
   ];
   
   trackingOrders = [
@@ -136,35 +136,35 @@ export class DashboardComponent implements OnInit {
       id: 'ORD-2023-002', 
       status: 'In Progress',
       tracking: [
-        { step: 'Order Placed', date: '2023-12-20 14:30', completed: true },
-        { step: 'Payment Confirmed', date: '2023-12-20 15:10', completed: true },
-        { step: 'Processing', date: '2023-12-21 09:45', completed: true },
-        { step: 'Dispatched', date: '2023-12-21 14:20', completed: false },
-        { step: 'Out for Delivery', date: '', completed: false },
-        { step: 'Delivered', date: '', completed: false }
+        { step: 'Commande Passée', date: '2023-12-20 14:30', completed: true },
+        { step: 'Paiement Confirmé', date: '2023-12-20 15:10', completed: true },
+        { step: 'En Traitement', date: '2023-12-21 09:45', completed: true },
+        { step: 'Expédié', date: '2023-12-21 14:20', completed: false },
+        { step: 'En Cours de Livraison', date: '', completed: false },
+        { step: 'Livré', date: '', completed: false }
       ]
     },
     { 
       id: 'ORD-2023-003', 
       status: 'Pending',
       tracking: [
-        { step: 'Order Placed', date: '2023-12-28 10:15', completed: true },
-        { step: 'Payment Confirmed', date: '2023-12-28 10:30', completed: true },
-        { step: 'Processing', date: '', completed: false },
-        { step: 'Dispatched', date: '', completed: false },
-        { step: 'Out for Delivery', date: '', completed: false },
-        { step: 'Delivered', date: '', completed: false }
+        { step: 'Commande Passée', date: '2023-12-28 10:15', completed: true },
+        { step: 'Paiement Confirmé', date: '2023-12-28 10:30', completed: true },
+        { step: 'En Traitement', date: '', completed: false },
+        { step: 'Expédié', date: '', completed: false },
+        { step: 'En Cours de Livraison', date: '', completed: false },
+        { step: 'Livré', date: '', completed: false }
       ]
     }
   ];
 
   issueTypes = [
-    'Damaged Product',
-    'Wrong Product',
-    'Missing Item',
-    'Delayed Delivery',
-    'Quality Issue',
-    'Other'
+    'Produit Endommagé',
+    'Produit Incorrect',
+    'Article Manquant',
+    'Retard de Livraison',
+    'Problème de Qualité',
+    'Autre'
   ];
 
   constructor(
@@ -386,12 +386,32 @@ export class DashboardComponent implements OnInit {
   }
 
   formatStatus(status: string): string {
-    if (!status) return '';
-    // Convert snake/kebab case to Title Case
-    return status
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    const statusMap: Record<string, string> = {
+      'new': 'Nouvelle',
+      'pending': 'En attente',
+      'in_progress': 'En cours',
+      'resolved': 'Résolue',
+      'closed': 'Fermée'
+    };
+    
+    return statusMap[status] || status;
+  }
+
+  getStatusInFrench(status: string): string {
+    const statusMap: Record<string, string> = {
+      'Pending': 'En Attente',
+      'Processing': 'En Traitement',
+      'In Progress': 'En Cours',
+      'In Transit': 'En Transit',
+      'Delivered': 'Livré',
+      'Ready for pickup': 'Prêt pour enlèvement',
+      'Waiting': 'En Attente',
+      'Cancelled': 'Annulé',
+      'Active': 'Actif',
+      'Idle': 'Inactif'
+    };
+    
+    return statusMap[status] || status;
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
@@ -420,5 +440,14 @@ export class DashboardComponent implements OnInit {
   closeReclamationViewModal(): void {
     this.showReclamationViewModal = false;
     this.selectedReclamation = null;
+  }
+
+  changeSpace(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const space = selectElement.value;
+    
+    if (space) {
+      this.router.navigate([`/${space}/dashboard`]);
+    }
   }
 } 

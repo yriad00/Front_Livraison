@@ -1,103 +1,135 @@
-<div class="individual-dashboard">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <span *ngIf="isSidebarCollapsed">☰</span>
-    <span *ngIf="!isSidebarCollapsed">✕</span>
-  </button>
-  <nav class="sidebar" [class.collapsed]="isSidebarCollapsed">
-    <div class="sidebar-header">
-      <h2>Individual Portal</h2>
+<header class="dashboard-header">
+  <h1>My Dashboard</h1>
+  <div class="actions">
+    <button class="btn btn-primary">New Order</button>
+  </div>
+</header>
+
+<div class="dashboard-content">
+  <div class="dashboard-summary" [@listAnimation]="summaryData.activeOrders">
+    <div class="summary-card" [@cardAnimation]>
+      <div class="icon-container active">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="card-content">
+        <h3>Active Orders</h3>
+        <p class="summary-count">{{ summaryData.activeOrders }}</p>
+      </div>
     </div>
-    <ul class="nav-links">
-      <li><a routerLink="/particulier/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/particulier/all-orders" routerLinkActive="active">My Orders</a></li>
-      <li><a routerLink="/particulier/process-orders" routerLinkActive="active">Process Orders</a></li>
-      <li><a routerLink="/particulier/reclamations" routerLinkActive="active">My Reclamations</a></li>
-      <li><a routerLink="/particulier/platform-issue" routerLinkActive="active">Report Issue</a></li>
-      <li><a routerLink="/particulier/billing" routerLinkActive="active">Billing</a></li>
-      <li><a routerLink="/particulier/subscription" routerLinkActive="active">Subscription</a></li>
-      <li class="logout"><a (click)="logout()">Logout</a></li>
-    </ul>
-  </nav>
-
-  <div class="main-content">
-    <header class="dashboard-header">
-      <h1>Individual Dashboard</h1>
-      <div class="user-info" *ngIf="currentUser">
-        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+    <div class="summary-card" [@cardAnimation]>
+      <div class="icon-container total">
+        <i class="fas fa-shopping-cart"></i>
       </div>
-    </header>
-
-    <div class="dashboard-content">
-      <div class="dashboard-summary">
-        <div class="summary-card">
-          <h3>Active Orders</h3>
-          <p class="summary-count">3</p>
-        </div>
-        <div class="summary-card">
-          <h3>Total Orders</h3>
-          <p class="summary-count">12</p>
-        </div>
-        <div class="summary-card">
-          <h3>Pending Deliveries</h3>
-          <p class="summary-count">2</p>
-        </div>
-        <div class="summary-card">
-          <h3>Completed</h3>
-          <p class="summary-count">10</p>
-        </div>
+      <div class="card-content">
+        <h3>Total Orders</h3>
+        <p class="summary-count">{{ summaryData.totalOrders }}</p>
       </div>
+    </div>
+    <div class="summary-card" [@cardAnimation]>
+      <div class="icon-container pending">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="card-content">
+        <h3>Pending Deliveries</h3>
+        <p class="summary-count">{{ summaryData.pendingDeliveries }}</p>
+      </div>
+    </div>
+    <div class="summary-card" [@cardAnimation]>
+      <div class="icon-container completed">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="card-content">
+        <h3>Completed</h3>
+        <p class="summary-count">{{ summaryData.completed }}</p>
+      </div>
+    </div>
+  </div>
 
-      <div class="dashboard-sections">
-        <section class="recent-orders">
-          <h2>Recent Orders</h2>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Destination</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>IND-1002</td>
-                  <td>May 6, 2025</td>
-                  <td>In Progress</td>
-                  <td>123 Main St, Paris</td>
-                  <td><a href="#">Track</a></td>
-                </tr>
-                <tr>
-                  <td>IND-1001</td>
-                  <td>May 5, 2025</td>
-                  <td>Delivered</td>
-                  <td>456 Oak Ave, Lyon</td>
-                  <td><a href="#">View</a></td>
-                </tr>
-                <tr>
-                  <td>IND-998</td>
-                  <td>May 1, 2025</td>
-                  <td>Delivered</td>
-                  <td>789 Pine Rd, Marseille</td>
-                  <td><a href="#">View</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+  <div class="dashboard-sections">
+    <section class="recent-orders" [@cardAnimation]>
+      <h2>Recent Orders</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Destination</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders; let i = index" [@listAnimation]="i">
+              <td>{{ order.id }}</td>
+              <td>{{ order.date }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="{'pending': order.status === 'Pending', 'in-progress': order.status === 'In Progress', 'delivered': order.status === 'Delivered', 'cancelled': order.status === 'Cancelled'}">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>{{ order.destination }}</td>
+              <td><a href="#" class="action-link">{{ order.action }}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="section-footer">
+        <a routerLink="/particulier/all-orders" class="view-all">View All Orders</a>
+      </div>
+    </section>
 
-        <section class="analytics">
-          <h2>Order Analytics</h2>
-          <div class="chart-placeholder">
-            <div class="chart-info">
-              <p>Monthly Order Summary</p>
-              <p class="chart-note">Charts and analytics will be displayed here</p>
+    <div class="secondary-sections">
+      <section class="recent-activity" [@cardAnimation]>
+        <h2>Recent Activity</h2>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let activity of recentActivity; let i = index" [@listAnimation]="i">
+            <div class="activity-icon" [ngClass]="{'order': activity.type.includes('Order'), 'delivery': activity.type.includes('Delivery'), 'payment': activity.type.includes('Payment')}">
+              <i [class]="activity.type.includes('Order') ? 'fas fa-box' : activity.type.includes('Delivery') ? 'fas fa-truck' : 'fas fa-credit-card'"></i>
+            </div>
+            <div class="activity-details">
+              <h4>{{ activity.type }}</h4>
+              <p>{{ activity.details }}</p>
+              <span class="activity-date">{{ activity.date }}</span>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      <section class="available-agents" [@cardAnimation]>
+        <h2>Available Delivery Agents</h2>
+        <div class="agents-list">
+          <div class="agent-card" *ngFor="let agent of availableAgents; let i = index" [@listAnimation]="i">
+            <div class="agent-avatar" [attr.data-initials]="agent.name.charAt(0)">
+              <img *ngIf="agent.avatar" [src]="agent.avatar" alt="{{ agent.name }}">
+            </div>
+            <div class="agent-info">
+              <h4>{{ agent.name }}</h4>
+              <div class="agent-details">
+                <div class="detail-item">
+                  <i class="fas fa-star"></i>
+                  <span>{{ agent.rating }} ({{ agent.reviews }})</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>{{ agent.area }}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-truck"></i>
+                  <span>{{ agent.deliveries }} deliveries</span>
+                </div>
+              </div>
+              <div class="agent-status" [ngClass]="{'active': agent.status === 'Active', 'busy': agent.status === 'Busy'}">
+                <i class="fas fa-circle"></i> {{ agent.status }}
+              </div>
+            </div>
+            <button class="btn btn-outline-primary request-btn" (click)="requestAgent(agent.id)" [disabled]="agent.status !== 'Active'">Request</button>
+          </div>
+        </div>
+        <div class="section-footer">
+          <a routerLink="/particulier/delivery-agents" class="view-all">View All Agents</a>
+        </div>
+      </section>
     </div>
   </div>
 </div>

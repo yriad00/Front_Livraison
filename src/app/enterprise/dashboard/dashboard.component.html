@@ -1,106 +1,224 @@
-<div class="enterprise-dashboard">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <span *ngIf="isSidebarCollapsed">☰</span>
-    <span *ngIf="!isSidebarCollapsed">✕</span>
-  </button>
-  <nav class="sidebar" [class.collapsed]="isSidebarCollapsed">
-    <div class="sidebar-header">
-      <h2>Enterprise Portal</h2>
+<div class="dashboard-container" [@fadeInUp]>
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>Tableau de Bord Entreprise</h1>
+      <p class="welcome-message">Bienvenue, {{ currentUser.firstName }}!</p>
     </div>
-    <ul class="nav-links">
-      <li><a routerLink="/enterprise/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/enterprise/import-orders" routerLinkActive="active">Import Orders</a></li>
-      <li><a routerLink="/enterprise/all-orders" routerLinkActive="active">All Orders</a></li>
-      <li><a routerLink="/enterprise/process-orders" routerLinkActive="active">Process Orders</a></li>
-      <li><a routerLink="/enterprise/agents" routerLinkActive="active">Available Agents</a></li>
-      <li><a routerLink="/enterprise/delivery-agents" routerLinkActive="active">Delivery Agents</a></li>
-      <li><a routerLink="/enterprise/reclamations" routerLinkActive="active">Client Reclamations</a></li>
-      <li><a routerLink="/enterprise/platform-issue" routerLinkActive="active">Platform Issue</a></li>
-      <li><a routerLink="/enterprise/billing" routerLinkActive="active">Billing</a></li>
-      <li><a routerLink="/enterprise/subscription" routerLinkActive="active">Subscription</a></li>
-      <li class="logout"><a (click)="logout()">Logout</a></li>
-    </ul>
-  </nav>
+    <div class="action-buttons">
+      <button class="btn btn-primary blue-gradient">
+        <i class="fas fa-plus"></i> Nouvelle Commande
+      </button>
+      <button class="btn btn-outline blue-outline">
+        <i class="fas fa-file-export"></i> Exporter les Données
+      </button>
+    </div>
+  </header>
 
-  <div class="main-content">
-    <header class="dashboard-header">
-      <h1>Enterprise Dashboard</h1>
-      <div class="user-info" *ngIf="currentUser">
-        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-      </div>
-    </header>
-
-    <div class="dashboard-content">
-      <div class="dashboard-summary">
-        <div class="summary-card">
-          <h3>Active Orders</h3>
-          <p class="summary-count">15</p>
+  <div class="stats-overview">
+    <div class="order-statistics">
+      <div class="stat-card total blue-card" [@cardAnimation]>
+        <div class="stat-icon">
+          <i class="fas fa-shopping-cart"></i>
         </div>
-        <div class="summary-card">
-          <h3>Total Orders</h3>
-          <p class="summary-count">87</p>
-        </div>
-        <div class="summary-card">
-          <h3>Active Deliveries</h3>
-          <p class="summary-count">7</p>
-        </div>
-        <div class="summary-card">
-          <h3>Employees</h3>
-          <p class="summary-count">23</p>
-        </div>
-      </div>
-
-      <div class="dashboard-sections">
-        <section class="recent-orders">
-          <h2>Recent Orders</h2>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1002</td>
-                  <td>ABC Corporation</td>
-                  <td>Apr 16, 2023</td>
-                  <td>In Progress</td>
-                  <td><a href="#">View</a></td>
-                </tr>
-                <tr>
-                  <td>1001</td>
-                  <td>XYZ Ltd</td>
-                  <td>Apr 15, 2023</td>
-                  <td>Delivered</td>
-                  <td><a href="#">View</a></td>
-                </tr>
-                <tr>
-                  <td>998</td>
-                  <td>Tech Solutions</td>
-                  <td>Apr 10, 2023</td>
-                  <td>Delivered</td>
-                  <td><a href="#">View</a></td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="stat-info">
+          <h3>Total Commandes</h3>
+          <p class="stat-value">{{ orderStats.total }}</p>
+          <div class="stat-progress">
+            <div class="progress-bar blue-progress" style="width: 100%"></div>
           </div>
-        </section>
-
-        <section class="analytics">
-          <h2>Business Analytics</h2>
-          <div class="chart-placeholder">
-            <div class="chart-info">
-              <p>Monthly Order Summary</p>
-              <p class="chart-note">Charts and analytics will be displayed here</p>
+        </div>
+      </div>
+      
+      <div class="stat-card pending" [@cardAnimation]>
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3>En Attente</h3>
+          <p class="stat-value">{{ orderStats.pending }}</p>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width.%]="(orderStats.pending / orderStats.total) * 100"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card processing" [@cardAnimation]>
+        <div class="stat-icon">
+          <i class="fas fa-cog"></i>
+        </div>
+        <div class="stat-info">
+          <h3>En Traitement</h3>
+          <p class="stat-value">{{ orderStats.processing }}</p>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width.%]="(orderStats.processing / orderStats.total) * 100"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card transit" [@cardAnimation]>
+        <div class="stat-icon">
+          <i class="fas fa-truck-moving"></i>
+        </div>
+        <div class="stat-info">
+          <h3>En Transit</h3>
+          <p class="stat-value">{{ orderStats.transit }}</p>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width.%]="(orderStats.transit / orderStats.total) * 100"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card delivered" [@cardAnimation]>
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Livrées</h3>
+          <p class="stat-value">{{ orderStats.delivered }}</p>
+          <div class="stat-progress">
+            <div class="progress-bar" [style.width.%]="(orderStats.delivered / orderStats.total) * 100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-sections">
+    <section class="recent-orders blue-section" [@fadeInRight]>
+      <div class="section-header">
+        <h2>Commandes Récentes</h2>
+        <div class="header-actions">
+          <div class="search-box blue-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher des commandes...">
+          </div>
+          <a routerLink="/enterprise/all-orders" class="view-all blue-link">Voir Tout <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+      
+      <div class="orders-table-container">
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>ID Commande</th>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Statut</th>
+              <th>Articles</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders; let i = index" [@listAnimation]="i">
+              <td><strong>{{ order.id }}</strong></td>
+              <td>{{ order.date }}</td>
+              <td>{{ order.client }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="{
+                  'pending': order.status === 'Pending',
+                  'processing': order.status === 'Processing',
+                  'transit': order.status === 'In Transit',
+                  'delivered': order.status === 'Delivered'
+                }">{{ getStatusInFrench(order.status) }}</span>
+              </td>
+              <td>{{ order.items }}</td>
+              <td>{{ order.total }}</td>
+              <td>
+                <div class="action-buttons-group">
+                  <button class="action-btn primary blue-btn">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="action-btn secondary blue-btn-secondary">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <div class="secondary-sections">
+      <section class="agent-activity blue-section" [@fadeInUp]>
+        <div class="section-header">
+          <h2>Activité des Agents de Livraison</h2>
+          <a routerLink="/enterprise/delivery-agents" class="view-all blue-link">Voir Tout <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+        <div class="agent-list">
+          <div class="agent-card blue-agent-card" *ngFor="let agent of agentActivity; let i = index" [@listAnimation]="i" [@pulse]="animationState">
+            <div class="agent-info">
+              <div class="agent-avatar blue-avatar">{{ agent.name.charAt(0) }}</div>
+              <div class="agent-details">
+                <h4>{{ agent.name }}</h4>
+                <p class="agent-id">ID: {{ agent.id }}</p>
+              </div>
+            </div>
+            <div class="agent-stats">
+              <div class="agent-stat">
+                <span class="stat-label">Statut</span>
+                <span class="stat-value status" [ngClass]="{'active': agent.status === 'Active', 'idle': agent.status === 'Idle'}">
+                  <i class="fas fa-circle"></i> {{ getStatusInFrench(agent.status) }}
+                </span>
+              </div>
+              <div class="agent-stat">
+                <span class="stat-label">Livraisons</span>
+                <span class="stat-value">{{ agent.deliveries }}</span>
+              </div>
+              <div class="agent-stat">
+                <span class="stat-label">Zone</span>
+                <span class="stat-value">{{ agent.area }}</span>
+              </div>
+            </div>
+            <div class="agent-actions">
+              <button class="btn-text blue-text-btn">Message</button>
+              <button class="btn-text blue-text-btn">Assigner</button>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+      
+      <section class="analytics-summary blue-section" [@fadeInUp]>
+        <div class="section-header">
+          <h2>Aperçu Analytique</h2>
+          <a routerLink="/enterprise/analytics" class="view-all blue-link">Voir Détails <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+        <div class="analytics-cards">
+          <div class="analytics-card blue-stats-card" *ngFor="let i of [1, 2, 3, 4]">
+            <ng-container *ngIf="i === 1">
+              <div class="analytics-value">87%</div>
+              <div class="analytics-label">Livraison à Temps</div>
+              <div class="trend up">
+                <i class="fas fa-arrow-up"></i> 5%
+              </div>
+            </ng-container>
+            <ng-container *ngIf="i === 2">
+              <div class="analytics-value">92%</div>
+              <div class="analytics-label">Satisfaction Client</div>
+              <div class="trend up">
+                <i class="fas fa-arrow-up"></i> 3%
+              </div>
+            </ng-container>
+            <ng-container *ngIf="i === 3">
+              <div class="analytics-value">€345</div>
+              <div class="analytics-label">Valeur Moyenne Commande</div>
+              <div class="trend up">
+                <i class="fas fa-arrow-up"></i> 8%
+              </div>
+            </ng-container>
+            <ng-container *ngIf="i === 4">
+              <div class="analytics-value">18min</div>
+              <div class="analytics-label">Temps Moyen de Réponse</div>
+              <div class="trend down">
+                <i class="fas fa-arrow-down"></i> 12%
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div> 

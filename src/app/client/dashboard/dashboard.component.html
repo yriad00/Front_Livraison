@@ -3,13 +3,21 @@
     <div class="header-left">
       <!-- Logo removed temporarily -->
       <div class="welcome-text">
-        Welcome back, <span class="user-name animated-text blue-text">{{ currentUser?.name || currentUser?.firstName || 'Client' }}</span>
+        Bienvenue, <span class="user-name animated-text blue-text">{{ currentUser?.name || currentUser?.firstName || 'Client' }}</span>
       </div>
     </div>
     <div class="header-right">
+      <div class="space-selector">
+        <select (change)="changeSpace($event)" class="space-select">
+          <option value="client" selected>Espace Client</option>
+          <option value="enterprise">Espace Entreprise</option>
+          <option value="delivery">Espace Livreur</option>
+          <option value="particulier">Espace Particulier</option>
+        </select>
+      </div>
       <button class="btn-logout animated-btn red-btn" (click)="logout()">
         <i class="icon-logout fas fa-sign-out-alt"></i>
-        Logout
+        Déconnexion
       </button>
     </div>
   </header>
@@ -21,7 +29,7 @@
           class="nav-btn" 
           [class.active]="activeTab === 'orders'"
           (click)="setActiveTab('orders')">
-          <i class="fas fa-box-open"></i> My Orders
+          <i class="fas fa-box-open"></i> Mes Commandes
         </button>
       </li>
       <li>
@@ -29,7 +37,7 @@
           class="nav-btn" 
           [class.active]="activeTab === 'reclamations'"
           (click)="setActiveTab('reclamations')">
-          <i class="fas fa-exclamation-circle"></i> My Reclamations
+          <i class="fas fa-exclamation-circle"></i> Mes Réclamations
         </button>
       </li>
       <li>
@@ -37,7 +45,7 @@
           class="nav-btn" 
           [class.active]="activeTab === 'tracking'"
           (click)="setActiveTab('tracking')">
-          <i class="fas fa-truck"></i> Track Orders
+          <i class="fas fa-truck"></i> Suivi des Commandes
         </button>
       </li>
       <li>
@@ -45,7 +53,7 @@
           class="nav-btn" 
           [class.active]="activeTab === 'profile'"
           (click)="setActiveTab('profile')">
-          <i class="fas fa-user"></i> My Profile
+          <i class="fas fa-user"></i> Mon Profil
         </button>
       </li>
     </ul>
@@ -54,19 +62,19 @@
   <div class="dashboard-content" [@fadeInAnimation]>
     <div class="dashboard-summary">
       <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
-        <h3>My Orders</h3>
+        <h3>Mes Commandes</h3>
         <p class="summary-count">{{ orderStats.total }}</p>
       </div>
       <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
-        <h3>Pending Deliveries</h3>
+        <h3>Livraisons en Attente</h3>
         <p class="summary-count">{{ orderStats.pending }}</p>
       </div>
       <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
-        <h3>Completed Orders</h3>
+        <h3>Commandes Terminées</h3>
         <p class="summary-count">{{ orderStats.delivered }}</p>
       </div>
       <div class="summary-card" [@slideIn] [@pulseAnimation]="pulseState">
-        <h3>My Reclamations</h3>
+        <h3>Mes Réclamations</h3>
         <p class="summary-count">{{ reclamationStats.total }}</p>
       </div>
     </div>
@@ -74,14 +82,14 @@
     <!-- Dashboard Tab -->
     <div *ngIf="activeTab === 'dashboard'" class="dashboard-sections" [@fadeInAnimation]>
       <section class="my-orders">
-        <h2>My Recent Orders</h2>
+        <h2>Mes Commandes Récentes</h2>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Order ID</th>
+                <th>ID Commande</th>
                 <th>Date</th>
-                <th>Status</th>
+                <th>Statut</th>
                 <th>Total</th>
                 <th>Action</th>
               </tr>
@@ -90,10 +98,10 @@
               <tr *ngFor="let order of recentOrders; let i = index" [@listAnimation]>
                 <td>{{ order.id }}</td>
                 <td>{{ order.date }}</td>
-                <td>{{ order.status }}</td>
+                <td>{{ getStatusInFrench(order.status) }}</td>
                 <td>{{ order.total }} DHS</td>
                 <td>
-                  <a [routerLink]="['/client/tracking', order.id]" class="btn-link animated-btn">Track</a>
+                  <a [routerLink]="['/client/tracking', order.id]" class="btn-link animated-btn">Suivre</a>
                 </td>
               </tr>
             </tbody>
@@ -102,7 +110,7 @@
       </section>
 
       <section class="delivery-tracking">
-        <h2 class="delivery-heading">Current Deliveries</h2>
+        <h2 class="delivery-heading">Livraisons en Cours</h2>
         <div *ngFor="let order of trackingOrders" class="tracking-info">
           <h3>{{ order.id }}</h3>
           <div class="tracking-status improved-spacing">
@@ -110,7 +118,7 @@
               <div class="status-dot"></div>
               <div class="status-text">
                 <p class="status-title">{{ step.step }}</p>
-                <p class="status-time">{{ step.date ? (step.date | date:'shortDate') : 'Pending' }}</p>
+                <p class="status-time">{{ step.date ? (step.date | date:'shortDate') : 'En attente' }}</p>
               </div>
             </div>
           </div>
@@ -121,14 +129,14 @@
     <!-- Orders Tab -->
     <div *ngIf="activeTab === 'orders'" class="dashboard-sections">
       <section class="all-orders full-width">
-        <h2>All My Orders</h2>
+        <h2>Toutes Mes Commandes</h2>
         <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Order ID</th>
+                <th>ID Commande</th>
                 <th>Date</th>
-                <th>Status</th>
+                <th>Statut</th>
                 <th>Total</th>
                 <th>Action</th>
               </tr>
@@ -139,13 +147,13 @@
                 <td>{{ order.date }}</td>
                 <td>
                   <span class="status-badge" [ngClass]="order.status.toLowerCase().replace(' ', '-')">
-                    {{ order.status }}
+                    {{ getStatusInFrench(order.status) }}
                   </span>
                 </td>
                 <td>{{ order.total }} DHS</td>
                 <td>
-                  <a *ngIf="order.status !== 'Delivered'" [routerLink]="['/client/tracking', order.id]" class="btn-link animated-btn">Track</a>
-                  <a *ngIf="order.status === 'Delivered'" href="#" class="btn-link animated-btn">View</a>
+                  <a *ngIf="order.status !== 'Delivered'" [routerLink]="['/client/tracking', order.id]" class="btn-link animated-btn">Suivre</a>
+                  <a *ngIf="order.status === 'Delivered'" href="#" class="btn-link animated-btn">Voir</a>
                 </td>
               </tr>
             </tbody>
@@ -157,16 +165,16 @@
     <!-- Reclamations Tab -->
     <div *ngIf="activeTab === 'reclamations'" class="dashboard-sections">
       <section class="my-reclamations full-width">
-        <h2>My Reclamations</h2>
+        <h2>Mes Réclamations</h2>
         <div class="table-container">
           <table>
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Order ID</th>
-                <th>Issue</th>
+                <th>ID Commande</th>
+                <th>Problème</th>
                 <th>Date</th>
-                <th>Status</th>
+                <th>Statut</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -181,13 +189,13 @@
                     {{ formatStatus(rec.status) }}
                   </span>
                 </td>
-                <td><a href="#" class="btn-link animated-btn" (click)="viewReclamation(rec.id)">View</a></td>
+                <td><a href="#" class="btn-link animated-btn" (click)="viewReclamation(rec.id)">Voir</a></td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="action-buttons">
-          <button class="btn btn-primary animated-btn" (click)="openReclamationModal()">New Reclamation</button>
+          <button class="btn btn-primary animated-btn" (click)="openReclamationModal()">Nouvelle Réclamation</button>
         </div>
       </section>
     </div>
@@ -195,16 +203,16 @@
     <!-- Tracking Tab -->
     <div *ngIf="activeTab === 'tracking'" class="dashboard-sections">
       <section class="order-tracking full-width">
-        <h2>Track Your Orders</h2>
+        <h2>Suivre Vos Commandes</h2>
         <div class="tracking-list">
           <div *ngFor="let order of trackingOrders" class="tracking-item">
             <div class="order-info">
               <h3>{{ order.id }}</h3>
-              <p>Placed on: {{ order.tracking && order.tracking[0] && order.tracking[0].date ? (order.tracking[0].date | date:'shortDate') : 'N/A' }}</p>
-              <p>Status: <span class="status-badge" [ngClass]="order.status.toLowerCase().replace(' ', '-')">{{ order.status }}</span></p>
+              <p>Commandé le: {{ order.tracking && order.tracking[0] && order.tracking[0].date ? (order.tracking[0].date | date:'shortDate') : 'N/A' }}</p>
+              <p>Statut: <span class="status-badge" [ngClass]="order.status.toLowerCase().replace(' ', '-')">{{ order.status }}</span></p>
             </div>
             <div class="tracking-actions">
-              <a [routerLink]="['/client/tracking', order.id]" class="btn btn-primary animated-btn">Track Order</a>
+              <a [routerLink]="['/client/tracking', order.id]" class="btn btn-primary animated-btn">Suivre la Commande</a>
             </div>
           </div>
         </div>
@@ -214,7 +222,7 @@
     <!-- Profile Tab -->
     <div *ngIf="activeTab === 'profile'" class="dashboard-sections">
       <section class="profile-section">
-        <h2>My Profile</h2>
+        <h2>Mon Profil</h2>
         <div class="profile-card">
           <div class="profile-header">
             <div class="profile-avatar">
@@ -227,22 +235,22 @@
           </div>
           <div class="profile-details">
             <div class="profile-section">
-              <h4>Account Information</h4>
+              <h4>Informations du Compte</h4>
               <div class="profile-info">
-                <p><strong>Account Type:</strong> {{ currentUser?.userType === 'enterprise' ? 'Business' : 'Individual' }}</p>
-                <p><strong>Member Since:</strong> January 2023</p>
-                <p><strong>Phone:</strong> {{ currentUser?.phone || 'Not specified' }}</p>
+                <p><strong>Type de Compte:</strong> {{ currentUser?.userType === 'enterprise' ? 'Entreprise' : 'Particulier' }}</p>
+                <p><strong>Membre depuis:</strong> Janvier 2023</p>
+                <p><strong>Téléphone:</strong> {{ currentUser?.phone || 'Non spécifié' }}</p>
               </div>
             </div>
             <div class="profile-section">
-              <h4>Shipping Address</h4>
+              <h4>Adresse de Livraison</h4>
               <div class="profile-info">
-                <p>{{ currentUser?.address || 'No address specified' }}</p>
+                <p>{{ currentUser?.address || 'Aucune adresse spécifiée' }}</p>
               </div>
             </div>
             <div class="profile-actions">
-              <button class="btn btn-secondary animated-btn">Edit Profile</button>
-              <button class="btn btn-secondary animated-btn">Change Password</button>
+              <button class="btn btn-secondary animated-btn">Modifier le Profil</button>
+              <button class="btn btn-secondary animated-btn">Changer le Mot de Passe</button>
             </div>
           </div>
         </div>
@@ -255,7 +263,7 @@
     <div class="modal-backdrop" (click)="closeReclamationModal()"></div>
     <div class="modal-content" [@slideUpAnimation]>
       <div class="modal-header">
-        <h2>Submit a Reclamation</h2>
+        <h2>Soumettre une Réclamation</h2>
         <button class="close-btn" (click)="closeReclamationModal()">
           <i class="fas fa-times"></i>
         </button>
@@ -263,38 +271,38 @@
       <div class="modal-body">
         <form [formGroup]="reclamationForm" (ngSubmit)="submitReclamation()">
           <div class="form-group">
-            <label for="orderSelect">Order ID *</label>
+            <label for="orderSelect">ID de Commande *</label>
             <select id="orderSelect" formControlName="orderId" class="form-control" required>
-              <option value="" disabled selected>Select an order</option>
-              <option *ngFor="let order of allOrders" [value]="order.id">Order #{{ order.id }} - {{ order.date | date:'shortDate' }}</option>
+              <option value="" disabled selected>Sélectionnez une commande</option>
+              <option *ngFor="let order of allOrders" [value]="order.id">Commande #{{ order.id }} - {{ order.date | date:'shortDate' }}</option>
             </select>
             <div *ngIf="reclamationForm.get('orderId')?.invalid && reclamationForm.get('orderId')?.touched" class="form-error">
-              Please select an order
+              Veuillez sélectionner une commande
             </div>
           </div>
 
           <div class="form-group">
-            <label for="issueType">Issue Type *</label>
+            <label for="issueType">Type de Problème *</label>
             <select id="issueType" formControlName="issueType" class="form-control" required>
-              <option value="" disabled selected>Select an issue type</option>
+              <option value="" disabled selected>Sélectionnez un type de problème</option>
               <option *ngFor="let type of issueTypes" [value]="type">{{ type }}</option>
             </select>
             <div *ngIf="reclamationForm.get('issueType')?.invalid && reclamationForm.get('issueType')?.touched" class="form-error">
-              Please select an issue type
+              Veuillez sélectionner un type de problème
             </div>
           </div>
 
           <div class="form-group">
             <label for="description">Description *</label>
-            <textarea id="description" formControlName="description" rows="5" class="form-control" placeholder="Describe your issue in detail..." required></textarea>
+            <textarea id="description" formControlName="description" rows="5" class="form-control" placeholder="Décrivez votre problème en détail..." required></textarea>
             <div *ngIf="reclamationForm.get('description')?.invalid && reclamationForm.get('description')?.touched" class="form-error">
-              Please provide a description (minimum 10 characters)
+              Veuillez fournir une description (minimum 10 caractères)
             </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary animated-btn" (click)="closeReclamationModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary animated-btn" [disabled]="reclamationForm.invalid">Submit Reclamation</button>
+            <button type="button" class="btn btn-secondary animated-btn" (click)="closeReclamationModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary animated-btn" [disabled]="reclamationForm.invalid">Soumettre la Réclamation</button>
           </div>
         </form>
       </div>
@@ -306,7 +314,7 @@
     <div class="modal-backdrop" (click)="closeReclamationViewModal()"></div>
     <div class="modal-content reclamation-view" [@slideUpAnimation]>
       <div class="modal-header">
-        <h2>Reclamation Details</h2>
+        <h2>Détails de la Réclamation</h2>
         <button class="close-btn" (click)="closeReclamationViewModal()">
           <i class="fas fa-times"></i>
         </button>
@@ -314,41 +322,41 @@
       <div class="modal-body">
         <div class="reclamation-details">
           <div class="detail-item">
-            <span class="detail-label">Reclamation ID:</span>
+            <span class="detail-label">ID Réclamation:</span>
             <span class="detail-value">{{ selectedReclamation?.id }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Order ID:</span>
+            <span class="detail-label">ID Commande:</span>
             <span class="detail-value">{{ selectedReclamation?.orderId }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Submission Date:</span>
+            <span class="detail-label">Date de Soumission:</span>
             <span class="detail-value">{{ selectedReclamation?.date | date:'mediumDate' }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Issue Type:</span>
+            <span class="detail-label">Type de Problème:</span>
             <span class="detail-value highlight">{{ selectedReclamation?.issue }}</span>
           </div>
           <div class="detail-item">
-            <span class="detail-label">Status:</span>
+            <span class="detail-label">Statut:</span>
             <span class="status-badge detail-value" [ngClass]="selectedReclamation?.status">
               {{ formatStatus(selectedReclamation?.status) }}
             </span>
           </div>
           <div class="detail-item description">
             <span class="detail-label">Description:</span>
-            <p class="detail-value">{{ selectedReclamation?.description || 'No description provided' }}</p>
+            <p class="detail-value">{{ selectedReclamation?.description || 'Aucune description fournie' }}</p>
           </div>
           
           <div class="reclamation-timeline">
-            <h3>Reclamation Timeline</h3>
+            <h3>Chronologie de la Réclamation</h3>
             <div class="timeline-container">
               <div class="timeline-item">
                 <div class="timeline-icon active">
                   <i class="fas fa-file-alt"></i>
                 </div>
                 <div class="timeline-content">
-                  <h4>Reclamation Submitted</h4>
+                  <h4>Réclamation Soumise</h4>
                   <p>{{ selectedReclamation?.date | date:'medium' }}</p>
                 </div>
               </div>
@@ -357,8 +365,8 @@
                   <i class="fas fa-search"></i>
                 </div>
                 <div class="timeline-content">
-                  <h4>Under Review</h4>
-                  <p>{{ selectedReclamation?.reviewDate ? (selectedReclamation.reviewDate | date:'medium') : 'Pending' }}</p>
+                  <h4>En Cours d'Examen</h4>
+                  <p>{{ selectedReclamation?.reviewDate ? (selectedReclamation.reviewDate | date:'medium') : 'En attente' }}</p>
                 </div>
               </div>
               <div class="timeline-item">
@@ -366,8 +374,8 @@
                   <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="timeline-content">
-                  <h4>Resolved</h4>
-                  <p>{{ selectedReclamation?.resolvedDate ? (selectedReclamation.resolvedDate | date:'medium') : 'Pending' }}</p>
+                  <h4>Résolue</h4>
+                  <p>{{ selectedReclamation?.resolvedDate ? (selectedReclamation.resolvedDate | date:'medium') : 'En attente' }}</p>
                 </div>
               </div>
             </div>
@@ -375,7 +383,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary animated-btn" (click)="closeReclamationViewModal()">Close</button>
+        <button type="button" class="btn btn-secondary animated-btn" (click)="closeReclamationViewModal()">Fermer</button>
       </div>
     </div>
   </div>

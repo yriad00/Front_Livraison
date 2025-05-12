@@ -1,110 +1,138 @@
-<div class="delivery-dashboard">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <i class="fa fa-bars"></i> Menu
-  </button>
-  <nav class="sidebar" [ngClass]="{'collapsed': isSidebarCollapsed}">
-    <div class="sidebar-header">
-      <h2>Delivery Agent</h2>
+<header class="dashboard-header">
+  <div class="header-content">
+    <h1>Tableau de Bord Livreur</h1>
+    <p class="welcome-message">Bienvenue, {{ currentUser.firstName }}!</p>
+  </div>
+  
+  <div class="status-toggle">
+    <span class="status-label">Statut:</span>
+    <button class="status-btn" [class.online]="isOnline" [class.offline]="!isOnline" (click)="toggleOnlineStatus()">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ isOnline ? 'En ligne' : 'Hors ligne' }}</span>
+    </button>
+  </div>
+</header>
+
+<div class="dashboard-content">
+  <div class="earnings-cards" [@listAnimation]="earningsData.deliveries">
+    <div class="earnings-card today" [@cardAnimation]>
+      <div class="card-icon">
+        <i class="fas fa-wallet"></i>
+      </div>
+      <div class="card-content">
+        <h3>Gains Aujourd'hui</h3>
+        <p class="earnings-value">{{ earningsData.today }}</p>
+      </div>
     </div>
-    <ul class="nav-links">
-      <li><a routerLink="/delivery/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/delivery/orders" routerLinkActive="active">Order Queue</a></li>
-      <li><a routerLink="/delivery/map" routerLinkActive="active">Navigation Map</a></li>
-      <li><a routerLink="/delivery/history" routerLinkActive="active">Delivery History</a></li>
-      <li><a routerLink="/delivery/reviews" routerLinkActive="active">Customer Reviews</a></li>
-      <li class="logout"><a (click)="logout()">Logout</a></li>
-    </ul>
-  </nav>
-
-  <div class="main-content" [ngClass]="{'sidebar-open': !isSidebarCollapsed}">
-    <header class="dashboard-header">
-      <h1>Delivery Agent Dashboard</h1>
-      <div class="user-info" *ngIf="currentUser">
-        <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+    
+    <div class="earnings-card week" [@cardAnimation]>
+      <div class="card-icon">
+        <i class="fas fa-calendar-week"></i>
       </div>
-    </header>
-
-    <div class="dashboard-content" @fadeIn>
-      <div class="dashboard-summary" @cardAnimation>
-        <div class="summary-card">
-          <h3>Active Deliveries</h3>
-          <p class="summary-count">{{ activeDeliveries }}</p>
-        </div>
-        <div class="summary-card">
-          <h3>Completed Today</h3>
-          <p class="summary-count">{{ completedToday }}</p>
-        </div>
-        <div class="summary-card">
-          <h3>Today's Earnings</h3>
-          <p class="summary-count">€{{ earnings }}</p>
-        </div>
-        <div class="summary-card">
-          <h3>Rating</h3>
-          <p class="summary-count">4.8</p>
-          <div class="rating">
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star half">★</span>
-          </div>
-        </div>
+      <div class="card-content">
+        <h3>Cette Semaine</h3>
+        <p class="earnings-value">{{ earningsData.week }}</p>
       </div>
-
-      <div class="dashboard-sections" @fadeIn>
-        <section class="current-deliveries">
-          <div class="section-header">
-            <h2>Current Deliveries</h2>
-            <a routerLink="/delivery/orders" class="view-all">View All</a>
+    </div>
+    
+    <div class="earnings-card month" [@cardAnimation]>
+      <div class="card-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="card-content">
+        <h3>Ce Mois</h3>
+        <p class="earnings-value">{{ earningsData.month }}</p>
+      </div>
+    </div>
+    
+    <div class="earnings-card deliveries" [@cardAnimation]>
+      <div class="card-icon">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <div class="card-content">
+        <h3>Total Livraisons</h3>
+        <p class="earnings-value">{{ earningsData.deliveries }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dashboard-sections">
+    <section class="pending-deliveries" [@cardAnimation]>
+      <div class="section-header">
+        <h2>Livraisons en Attente</h2>
+        <a routerLink="/delivery/orders" class="view-all">Voir Tout</a>
+      </div>
+      
+      <div class="delivery-list">
+        <div class="delivery-card" *ngFor="let delivery of pendingDeliveries; let i = index" [@listAnimation]="i">
+          <div class="delivery-header">
+            <div class="delivery-id">{{ delivery.id }}</div>
+            <div class="delivery-status" [ngClass]="{
+              'ready': delivery.status === 'Ready for pickup',
+              'waiting': delivery.status === 'Waiting'
+            }">{{ getStatusInFrench(delivery.status) }}</div>
           </div>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Client</th>
-                  <th>Delivery Address</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1002</td>
-                  <td>Jane Smith</td>
-                  <td>456 Avenue des Champs-Élysées, Paris</td>
-                  <td><span class="status pending">Pending</span></td>
-                  <td>
-                    <button class="btn btn-primary">Start</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>1003</td>
-                  <td>Robert Johnson</td>
-                  <td>789 Boulevard Saint-Germain, Paris</td>
-                  <td><span class="status in-progress">In Progress</span></td>
-                  <td>
-                    <button class="btn btn-success">Update Status</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="delivery-map">
-          <div class="section-header">
-            <h2>Delivery Map</h2>
-            <a routerLink="/delivery/map" class="view-full">Full Map</a>
-          </div>
-          <div class="map-placeholder">
-            <div class="map-info">
-              <p>Your delivery routes</p>
-              <p class="map-note">Interactive map showing your active delivery routes</p>
+          
+          <div class="delivery-details">
+            <div class="customer-info">
+              <i class="fas fa-user"></i>
+              <span>{{ delivery.customer }}</span>
+            </div>
+            <div class="address-info">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ delivery.address }}</span>
             </div>
           </div>
-        </section>
+          
+          <div class="delivery-metrics">
+            <div class="metric">
+              <i class="fas fa-clock"></i>
+              <span>{{ delivery.time }}</span>
+            </div>
+            <div class="metric">
+              <i class="fas fa-route"></i>
+              <span>{{ delivery.distance }}</span>
+            </div>
+            <div class="metric earnings">
+              <i class="fas fa-euro-sign"></i>
+              <span>{{ delivery.earnings }}</span>
+            </div>
+          </div>
+          
+          <div class="delivery-actions">
+            <button class="action-btn primary">
+              <i class="fas fa-check"></i> Accepter
+            </button>
+            <button class="action-btn secondary">
+              <i class="fas fa-times"></i> Refuser
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+    
+    <section class="recent-deliveries" [@cardAnimation]>
+      <div class="section-header">
+        <h2>Livraisons Récentes</h2>
+        <a routerLink="/delivery/history" class="view-all">Voir Historique</a>
+      </div>
+      
+      <div class="delivery-list compact">
+        <div class="delivery-card compact" *ngFor="let delivery of recentDeliveries; let i = index" [@listAnimation]="i">
+          <div class="delivery-header">
+            <div class="delivery-id">{{ delivery.id }}</div>
+            <div class="delivery-time">{{ delivery.time }}</div>
+          </div>
+          
+          <div class="delivery-summary">
+            <div class="customer-address">
+              <span class="customer">{{ delivery.customer }}</span>
+              <span class="address">{{ delivery.address }}</span>
+            </div>
+            <div class="delivery-price">{{ delivery.earnings }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div> 

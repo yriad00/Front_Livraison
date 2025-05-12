@@ -828,4 +828,30 @@
   &.ng-enter {
     animation: backToDashboard 0.4s ease-out;
   }
+}
+
+.space-selector {
+  margin-right: 15px;
+}
+
+.space-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 105, 217, 0.3);
+  background-color: rgba(0, 105, 217, 0.1);
+  color: #0069d9;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover, &:focus {
+    border-color: #0069d9;
+    background-color: rgba(0, 105, 217, 0.15);
+    outline: none;
+  }
+  
+  option {
+    background-color: white;
+    color: #333;
+  }
 } 

@@ -1,30 +1,51 @@
 <div class="delivery-layout">
-  <button class="sidebar-toggle" (click)="toggleSidebar()">
-    <i class="fa fa-bars"></i> Menu
+  <button class="sidebar-toggle" (click)="toggleSidebar()" [@pulseAnimation]>
+    <span *ngIf="isSidebarCollapsed">☰</span>
+    <span *ngIf="!isSidebarCollapsed">✕</span>
   </button>
   
-  <nav class="sidebar" [ngClass]="{'collapsed': isSidebarCollapsed}">
+  <nav class="sidebar" [class.collapsed]="isSidebarCollapsed">
     <div class="sidebar-header">
-      <h2>Delivery Agent</h2>
+      <h2>Espace Livreur</h2>
+      <div class="agent-info" *ngIf="currentUser">
+        <div class="agent-avatar">{{ currentUser.firstName?.charAt(0) || 'D' }}{{ currentUser.lastName?.charAt(0) || 'A' }}</div>
+        <div class="agent-details">
+          <div class="agent-name">{{ currentUser.firstName || 'Driver' }} {{ currentUser.lastName || 'Agent' }}</div>
+        </div>
+      </div>
+      
+      <div class="space-selector">
+        <select (change)="changeSpace($event)" class="space-select">
+          <option value="delivery" selected>Espace Livreur</option>
+          <option value="enterprise">Espace Entreprise</option>
+          <option value="client">Espace Client</option>
+          <option value="particulier">Espace Particulier</option>
+        </select>
+      </div>
     </div>
     <ul class="nav-links">
-      <li><a routerLink="/delivery/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/delivery/orders" routerLinkActive="active">Order Queue</a></li>
-      <li><a routerLink="/delivery/map" routerLinkActive="active">Navigation Map</a></li>
-      <li><a routerLink="/delivery/history" routerLinkActive="active">Delivery History</a></li>
-      <li><a routerLink="/delivery/reviews" routerLinkActive="active">Customer Reviews</a></li>
-      <li><a routerLink="/delivery/support" routerLinkActive="active">Support</a></li>
-      <li class="logout"><a (click)="logout()">Logout</a></li>
+      <li><a routerLink="/delivery/dashboard" routerLinkActive="active" (click)="preventCollapse($event)">
+        <i class="fas fa-tachometer-alt"></i> Tableau de Bord</a>
+      </li>
+      <li><a routerLink="/delivery/orders" routerLinkActive="active" (click)="preventCollapse($event)">
+        <i class="fas fa-list"></i> File d'Attente</a>
+      </li>
+      <li><a routerLink="/delivery/map" routerLinkActive="active" (click)="preventCollapse($event)">
+        <i class="fas fa-map-marked-alt"></i> Carte de Navigation</a>
+      </li>
+      <li><a routerLink="/delivery/history" routerLinkActive="active" (click)="preventCollapse($event)">
+        <i class="fas fa-history"></i> Historique de Livraison</a>
+      </li>
+      <li><a routerLink="/delivery/reviews" routerLinkActive="active" (click)="preventCollapse($event)">
+        <i class="fas fa-star"></i> Avis Clients</a>
+      </li>
+      <li class="logout"><a (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+      </li>
     </ul>
   </nav>
 
-  <div class="main-content" [ngClass]="{'sidebar-open': !isSidebarCollapsed}">
-    <div class="user-info" *ngIf="currentUser">
-      <span>Welcome, {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-    </div>
-    
-    <div class="content-container" @fadeIn>
-      <router-outlet></router-outlet>
-    </div>
+  <div class="main-content" [ngClass]="{'sidebar-collapsed': isSidebarCollapsed}" [@fadeAnimation]="outlet.isActivated ? outlet.activatedRoute : ''">
+    <router-outlet #outlet="outlet"></router-outlet>
   </div>
 </div>

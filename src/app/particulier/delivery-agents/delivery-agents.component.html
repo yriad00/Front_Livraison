@@ -1,0 +1,108 @@
+<div class="delivery-agents-container">
+  <header class="page-header">
+    <h1>Available Delivery Agents</h1>
+    <p class="description">Find and connect with our reliable delivery professionals ready to assist you</p>
+  </header>
+
+  <div class="filters-container" [@cardAnimation]>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        placeholder="Search by agent name, area or specialties..." 
+        (input)="onSearch($event)" 
+        [value]="searchTerm"
+      >
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-label">Filter by Area:</div>
+      <div class="filter-options">
+        <button 
+          *ngFor="let area of areas" 
+          [class.active]="selectedArea === area"
+          (click)="filterByArea(area)"
+          class="filter-button">
+          {{ area }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="filter-label">Filter by Status:</div>
+      <div class="filter-options">
+        <button 
+          *ngFor="let status of statuses" 
+          [class.active]="selectedStatus === status"
+          (click)="filterByStatus(status)"
+          class="filter-button">
+          {{ status }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="agents-grid" [@listAnimation]="filteredAgents.length">
+    <div class="agent-card" *ngFor="let agent of filteredAgents; let i = index" [@cardAnimation]>
+      <div class="agent-header">
+        <div class="agent-avatar" [attr.data-initials]="agent.name.charAt(0)">
+          <img *ngIf="agent.avatar" [src]="agent.avatar" alt="{{ agent.name }}">
+        </div>
+        <div class="agent-title">
+          <h3>{{ agent.name }}</h3>
+          <div class="agent-rating">
+            <span class="stars">
+              <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]" 
+                [ngClass]="{'filled': star <= agent.rating, 'half-filled': star > agent.rating && star <= agent.rating + 0.5}"></i>
+            </span>
+            <span class="rating-value">{{ agent.rating }}</span>
+            <span class="reviews-count">({{ agent.reviews }} reviews)</span>
+          </div>
+        </div>
+        <div class="agent-status" [ngClass]="{'active': agent.status === 'Active', 'busy': agent.status === 'Busy', 'offline': agent.status === 'Offline'}">
+          <i class="fas fa-circle"></i> {{ agent.status }}
+        </div>
+      </div>
+
+      <div class="agent-body">
+        <div class="agent-details">
+          <div class="detail-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ agent.area }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-truck"></i>
+            <span>{{ agent.deliveries }} deliveries completed</span>
+          </div>
+          <div class="specialties" *ngIf="agent.specialties && agent.specialties.length > 0">
+            <div class="detail-label">Specialties:</div>
+            <div class="specialties-list">
+              <span class="specialty-tag" *ngFor="let specialty of agent.specialties">{{ specialty }}</span>
+            </div>
+          </div>
+          <div class="agent-description" *ngIf="agent.description">
+            <p>{{ agent.description }}</p>
+          </div>
+        </div>
+
+        <div class="agent-actions">
+          <button 
+            class="btn btn-primary request-btn" 
+            (click)="requestAgent(agent.id)" 
+            [disabled]="agent.status !== 'Active'">
+            Request This Agent
+          </button>
+          <button class="btn btn-outline-secondary view-profile-btn">
+            View Full Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-results" *ngIf="filteredAgents.length === 0" [@cardAnimation]>
+    <i class="fas fa-search"></i>
+    <h3>No agents found</h3>
+    <p>Try adjusting your search criteria or filters</p>
+  </div>
+</div> 
